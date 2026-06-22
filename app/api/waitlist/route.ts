@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -7,6 +7,14 @@ export async function POST(request: Request) {
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+  }
+
+  let supabase;
+  try {
+    supabase = getSupabase();
+  } catch {
+    console.error("[waitlist] Supabase env vars not configured");
+    return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
   }
 
   const { error } = await supabase.from("waitlist").insert({ email });
