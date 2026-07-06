@@ -1,10 +1,10 @@
-import WaitlistForm from "./components/WaitlistForm";
+import RainbowMeshBackground from "@/app/components/RainbowMeshBackground";
 
 const features = [
   {
-    title: "Global map",
+    title: "Street-level map",
     description:
-      "Browse cruising spots across cities and countries on an interactive map built for discovery.",
+      "Explore spots on a detailed basemap with streets, cities, provinces, regions, and fast zoom-based discovery.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -51,9 +51,9 @@ const features = [
     ),
   },
   {
-    title: "Share your spots",
+    title: "Rich location data",
     description:
-      "Add locations, upload details, and help others find great places in your area.",
+      "Save the exact street address, city, province, region, coordinates, and context that make a spot easy to find.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -73,9 +73,9 @@ const features = [
     ),
   },
   {
-    title: "Built for privacy",
+    title: "Searchable directory",
     description:
-      "Anonymous profiles and discreet browsing so you explore on your own terms.",
+      "Public spot pages are crawlable and structured for search engines, while the interactive map stays a progressive enhancement.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -99,88 +99,109 @@ const features = [
 export default function Home() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-zinc-950 text-white">
-      <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(16,185,129,0.15),transparent)]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(16,185,129,0.08),transparent_40%)]"
-        aria-hidden
-      />
-
-      <header className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        <span className="text-xl font-bold tracking-tight">Crusit</span>
-        <a
-          href="#waitlist"
-          className="rounded-lg border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:border-zinc-500 hover:text-white"
-        >
-          Join waitlist
-        </a>
-      </header>
+      <RainbowMeshBackground variant="home" />
 
       <main className="relative z-10">
         {/* Hero */}
-        <section className="mx-auto max-w-6xl px-6 pb-24 pt-16 text-center md:pt-24">
+        <section className="mx-auto grid max-w-6xl gap-12 px-6 pb-24 pt-16 md:grid-cols-[1.1fr_0.9fr] md:items-center md:pt-24">
+          <div className="text-left">
           <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-sm text-emerald-300">
             <span className="size-1.5 rounded-full bg-emerald-400" />
-            Launching soon
+            Live community map
           </p>
 
-          <h1 className="mx-auto max-w-4xl text-5xl font-bold leading-[1.1] tracking-tight md:text-7xl">
-            Discover cruising spots{" "}
+          <h1 className="max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+            Discover places with{" "}
             <span className="bg-gradient-to-r from-emerald-300 to-teal-400 bg-clip-text text-transparent">
-              worldwide
+              real-world detail
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-400 md:text-xl">
-            A global community map for discovering, sharing, and reviewing cruising
-            locations — built by the community, for the community.
+          <p className="mt-6 max-w-2xl text-lg text-zinc-400 md:text-xl">
+            Crusit is a LGBTQI+ community-powered map for finding, reviewing, and
+            adding gay cruising spots with precise addresses, street-level
+            context, and location details that make discovery actually useful.
           </p>
 
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row">
             <a
-              href="#waitlist"
+              href="/spots"
               className="rounded-xl bg-emerald-500 px-8 py-4 font-semibold text-black transition hover:bg-emerald-400"
             >
-              Get early access
+              Explore spots
             </a>
             <a
-              href="#features"
+              href="/spots/new"
               className="rounded-xl border border-zinc-700 px-8 py-4 font-semibold text-zinc-300 transition hover:border-zinc-500 hover:text-white"
             >
-              See features
+              Add a spot
             </a>
           </div>
 
-          <div className="mx-auto mt-16 max-w-3xl rounded-2xl border border-zinc-800 bg-zinc-900/50 p-1 shadow-2xl shadow-emerald-500/5 backdrop-blur">
+          <dl className="mt-12 grid max-w-2xl gap-4 sm:grid-cols-3">
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
+              <dt className="text-xs uppercase tracking-[0.18em] text-zinc-500">Discover</dt>
+              <dd className="mt-2 text-2xl font-semibold text-white">Map + directory</dd>
+            </div>
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
+              <dt className="text-xs uppercase tracking-[0.18em] text-zinc-500">Contribute</dt>
+              <dd className="mt-2 text-2xl font-semibold text-white">Add exact locations</dd>
+            </div>
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
+              <dt className="text-xs uppercase tracking-[0.18em] text-zinc-500">Decide</dt>
+              <dd className="mt-2 text-2xl font-semibold text-white">Read real reviews</dd>
+            </div>
+          </dl>
+          </div>
+
+          <div className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-2 shadow-2xl shadow-emerald-500/10 backdrop-blur">
             <div className="flex items-center gap-2 border-b border-zinc-800 px-4 py-3">
               <span className="size-3 rounded-full bg-red-500/80" />
               <span className="size-3 rounded-full bg-yellow-500/80" />
               <span className="size-3 rounded-full bg-green-500/80" />
-              <span className="ml-2 text-xs text-zinc-500">crusit.app/map</span>
+              <span className="ml-2 text-xs text-zinc-500">www.crusit.com/spots</span>
             </div>
-            <div className="relative aspect-[16/9] overflow-hidden rounded-b-xl bg-zinc-900">
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#27272a_1px,transparent_1px),linear-gradient(to_bottom,#27272a_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-40" />
-              {[
-                { top: "25%", left: "20%" },
-                { top: "45%", left: "55%" },
-                { top: "60%", left: "30%" },
-                { top: "35%", left: "75%" },
-                { top: "70%", left: "65%" },
-              ].map((pin, index) => (
-                <div
-                  key={index}
-                  className="absolute size-4 -translate-x-1/2 -translate-y-full"
-                  style={{ top: pin.top, left: pin.left }}
-                >
-                  <div className="size-4 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50" />
-                  <div className="mx-auto mt-0.5 size-1 rounded-full bg-emerald-500/60" />
+            <div className="space-y-4 rounded-b-[1.35rem] bg-zinc-950 p-5">
+              <div className="rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-zinc-950 p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">
+                      Featured spot
+                    </p>
+                    <h2 className="mt-2 text-2xl font-semibold text-white">
+                      Viale del Tramonto
+                    </h2>
+                    <p className="mt-2 text-sm text-zinc-400">
+                      Viale del Tramonto 18, Rome, RM, Lazio, Italy
+                    </p>
+                  </div>
+                  <div className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-sm text-emerald-300">
+                    ★ 4.8
+                  </div>
                 </div>
-              ))}
-              <div className="absolute bottom-4 left-4 rounded-lg border border-zinc-700 bg-zinc-950/90 px-3 py-2 text-left text-xs text-zinc-400 backdrop-blur">
-                <p className="font-medium text-white">Central Park West</p>
-                <p className="mt-0.5 text-emerald-400">★ 4.8 · 23 reviews</p>
+                <p className="mt-4 text-sm leading-relaxed text-zinc-300">
+                  Street-level details, practical notes, and community reviews all
+                  in one place.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">
+                    Address data
+                  </p>
+                  <p className="mt-2 text-sm text-zinc-300">
+                    Street, city, province, region, postcode, coordinates
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">
+                    Discovery
+                  </p>
+                  <p className="mt-2 text-sm text-zinc-300">
+                    Crawlable pages for Google, interactive map for people
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -215,8 +236,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Waitlist */}
-        <section id="waitlist" className="mx-auto max-w-6xl px-6 pb-24">
+        <section className="mx-auto max-w-6xl px-6 pb-24">
           <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/60 px-8 py-16 text-center md:px-16">
             <div
               className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.12),transparent_60%)]"
@@ -224,18 +244,26 @@ export default function Home() {
             />
             <div className="relative">
               <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-                Be first to explore
+                Built for discovery, not just a demo
               </h2>
-              <p className="mx-auto mt-4 max-w-md text-zinc-400">
-                Join the waitlist for early access when Crusit launches. No spam,
-                just a heads-up when we go live.
+              <p className="mx-auto mt-4 max-w-2xl text-zinc-400">
+                Start with the public map, add precise locations, and build a
+                stronger directory one review at a time.
               </p>
-              <div className="relative mx-auto mt-8 max-w-md">
-                <WaitlistForm />
+              <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <a
+                  href="/spots"
+                  className="rounded-xl bg-emerald-500 px-8 py-4 font-semibold text-black transition hover:bg-emerald-400"
+                >
+                  Browse spots
+                </a>
+                <a
+                  href="/login"
+                  className="rounded-xl border border-zinc-700 px-8 py-4 font-semibold text-zinc-300 transition hover:border-zinc-500 hover:text-white"
+                >
+                  Sign in and contribute
+                </a>
               </div>
-              <p className="mt-6 text-xs text-zinc-500">
-                By joining, you agree to receive launch updates. Unsubscribe anytime.
-              </p>
             </div>
           </div>
         </section>
