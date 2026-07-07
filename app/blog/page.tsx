@@ -14,8 +14,8 @@ function formatDate(iso: string) {
   });
 }
 
-export default function BlogIndexPage() {
-  const posts = getAllBlogPosts();
+export default async function BlogIndexPage() {
+  const posts = await getAllBlogPosts();
 
   return (
     <div className="relative overflow-hidden">

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import RainbowMeshBackground from "@/app/components/RainbowMeshBackground";
-import { getAllBlogSlugs, getBlogPostBySlug } from "@/lib/blog";
+import RichText from "@/app/components/RichText";
+import { getBlogPostBySlug } from "@/lib/blog";
 import {
   blogPostingJsonLd,
   breadcrumbJsonLd,
@@ -14,13 +15,9 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return getAllBlogSlugs().map((slug) => ({ slug }));
-}
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPostBySlug(slug);
+  const post = await getBlogPostBySlug(slug);
   if (!post) {
     return { title: "Article not found", robots: { index: false, follow: false } };
   }
@@ -45,7 +42,7 @@ function formatDate(iso: string) {
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = getBlogPostBySlug(slug);
+  const post = await getBlogPostBySlug(slug);
   if (!post) notFound();
 
   const siteUrl = getSiteUrl();
@@ -101,26 +98,8 @@ export default async function BlogPostPage({ params }: PageProps) {
             <p className="mt-3 text-lg text-zinc-400">{post.excerpt}</p>
           </header>
 
-          <div className="mt-8 space-y-8">
-            {post.sections.map((section, index) => (
-              <section key={index}>
-                {section.heading ? (
-                  <h2 className="text-2xl font-semibold text-white">
-                    {section.heading}
-                  </h2>
-                ) : null}
-                <div className="mt-3 space-y-4">
-                  {section.paragraphs.map((paragraph, pIndex) => (
-                    <p
-                      key={pIndex}
-                      className="text-base leading-relaxed text-zinc-300"
-                    >
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
-              </section>
-            ))}
+          <div className="mt-8">
+            <RichText content={post.body} />
           </div>
 
           {post.tags.length > 0 ? (
