@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "@/app/components/Logo";
 import { signOutAction } from "@/app/actions";
 import { createClient } from "@/lib/supabase/server";
 
@@ -12,7 +13,11 @@ export default async function SiteHeader() {
     <header className="border-b border-zinc-800 bg-zinc-950/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-lg font-bold tracking-tight text-white">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-lg font-bold tracking-tight text-white"
+          >
+            <Logo className="size-7" />
             Crusit
           </Link>
           <nav aria-label="Main navigation" className="flex items-center gap-4 text-sm">
