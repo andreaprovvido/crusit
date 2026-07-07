@@ -326,6 +326,7 @@ export function organizationJsonLd(siteUrl: string) {
       caption: SITE_NAME,
     },
     image: { "@id": `${siteUrl}/#logo` },
+    sameAs: ["https://x.com/crusitapp"],
     description:
       "A global community map for discovering, sharing, and reviewing LGBTQI+ gay cruising spots.",
   };

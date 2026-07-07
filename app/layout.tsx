@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import SiteHeader from "./components/SiteHeader";
+import SiteFooter from "./components/SiteFooter";
 import {
   DEFAULT_DESCRIPTION,
   DEFAULT_TITLE,
@@ -64,7 +65,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-zinc-950 text-white">
+      <body className="flex min-h-full flex-col bg-zinc-950 text-white">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -72,7 +73,8 @@ export default function RootLayout({
           }}
         />
         <SiteHeader />
-        <main>{children}</main>
+        <main className="flex-1">{children}</main>
+        <SiteFooter />
         <GoogleAnalytics />
       </body>
     </html>
