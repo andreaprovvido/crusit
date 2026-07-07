@@ -19,11 +19,9 @@ export default async function SiteHeader() {
             <Link href="/spots" className="text-zinc-300 hover:text-white">
               Explore spots
             </Link>
-            {user ? (
-              <Link href="/spots/new" className="text-zinc-300 hover:text-white">
-                Add spot
-              </Link>
-            ) : null}
+            <Link href="/spots/new" className="text-zinc-300 hover:text-white">
+              Add spot
+            </Link>
           </nav>
         </div>
 

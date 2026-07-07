@@ -14,6 +14,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteVerification = process.env.GOOGLE_SITE_VERIFICATION;
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.crusit.com"),
   title: {
@@ -22,6 +24,9 @@ export const metadata: Metadata = {
   },
   description:
     "A global community map for discovering, sharing, and reviewing cruising locations.",
+  ...(siteVerification
+    ? { verification: { google: siteVerification } }
+    : {}),
 };
 
 export default function RootLayout({
