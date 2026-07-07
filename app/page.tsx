@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import RainbowMeshBackground from "@/app/components/RainbowMeshBackground";
-import { getSiteUrl, websiteJsonLd } from "@/lib/seo";
+import { buildHomeMetadata, getSiteUrl, websiteJsonLd } from "@/lib/seo";
+
+export const metadata: Metadata = buildHomeMetadata();
 
 const features = [
   {

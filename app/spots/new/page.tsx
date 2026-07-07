@@ -3,14 +3,15 @@ import { redirect } from "next/navigation";
 import NewSpotForm from "@/app/components/spots/NewSpotForm";
 import { createSpotAction } from "@/app/actions";
 import { createClient } from "@/lib/supabase/server";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Add a new spot",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export const metadata: Metadata = buildPageMetadata({
+  title: "Add a Cruising Spot | Crusit",
+  description:
+    "Share a new gay cruising spot with the Crusit community. Add a precise location, address, and details for others to discover.",
+  path: "/spots/new",
+  index: false,
+});
 
 type PageProps = {
   searchParams: Promise<{ error?: string }>;

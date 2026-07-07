@@ -2,22 +2,20 @@ import RainbowMeshBackground from "@/app/components/RainbowMeshBackground";
 import type { Metadata } from "next";
 import Link from "next/link";
 import SpotMapSection from "@/app/components/map/SpotMapSection";
-import SpotList from "@/app/components/spots/SpotList";
+import SpotCarousel from "@/app/components/spots/SpotCarousel";
+import SpotDiscoveryIndex from "@/app/components/spots/SpotDiscoveryIndex";
 import { COUNTRIES } from "@/lib/countries";
 import { SPOT_TYPES } from "@/lib/spotTypes";
-import { getSpots } from "@/lib/spots";
+import {
+  getCityFacets,
+  getCountryFacets,
+  getSpotTypeFacets,
+  getSpots,
+} from "@/lib/spots";
 
-import { buildPageMetadata } from "@/lib/seo";
+import { buildSpotsIndexMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Explore cruising spots",
-  ...buildPageMetadata({
-    title: "Explore cruising spots",
-    description:
-      "Browse LGBTQI+ cruising spots worldwide with community ratings, reviews, filters by country and type, and an interactive map.",
-    path: "/spots",
-  }),
-};
+export const metadata: Metadata = buildSpotsIndexMetadata();
 
 type PageProps = {
   searchParams: Promise<{
@@ -76,6 +74,19 @@ export default async function SpotsPage({ searchParams }: PageProps) {
 
   const { spots, total, totalPages } = spotsResult;
   const currentPage = spotsResult.page;
+
+  let countries: Awaited<ReturnType<typeof getCountryFacets>> = [];
+  let cities: Awaited<ReturnType<typeof getCityFacets>> = [];
+  let types: Awaited<ReturnType<typeof getSpotTypeFacets>> = [];
+  try {
+    [countries, cities, types] = await Promise.all([
+      getCountryFacets(),
+      getCityFacets(),
+      getSpotTypeFacets(),
+    ]);
+  } catch {
+    // Discovery index is best-effort; ignore facet load failures.
+  }
 
   return (
     <div className="relative overflow-hidden">
@@ -180,7 +191,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
           <h2 className="text-2xl font-semibold text-white">Spots</h2>
           <p className="text-sm text-zinc-400">{total} result{total === 1 ? "" : "s"}</p>
         </div>
-        <SpotList spots={spots} />
+        <SpotCarousel spots={spots} />
       </section>
 
       {totalPages > 1 ? (
@@ -206,6 +217,23 @@ export default async function SpotsPage({ searchParams }: PageProps) {
           ) : null}
         </nav>
       ) : null}
+
+      <section aria-label="Browse by place and category" className="mt-16 border-t border-zinc-800 pt-12">
+        <div className="max-w-3xl">
+          <p className="text-xs uppercase tracking-[0.18em] text-emerald-400">
+            Cruising guides
+          </p>
+          <h2 className="mt-2 text-3xl font-bold tracking-tight text-white">
+            Explore spots by place & category
+          </h2>
+          <p className="mt-3 text-zinc-400">
+            Jump into curated guides built from real community reviews.
+          </p>
+        </div>
+        <div className="mt-8">
+          <SpotDiscoveryIndex countries={countries} cities={cities} types={types} />
+        </div>
+      </section>
       </div>
     </div>
   );

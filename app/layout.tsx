@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import SiteHeader from "./components/SiteHeader";
-import { buildPageMetadata } from "@/lib/seo";
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_TITLE,
+  INDEX_ROBOTS,
+  SITE_NAME,
+  getSiteUrl,
+} from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,28 +23,30 @@ const geistMono = Geist_Mono({
 
 const siteVerification = process.env.GOOGLE_SITE_VERIFICATION;
 
+// Site-wide defaults. `metadataBase` resolves relative canonical/OG URLs, and
+// the title template brands any page that only sets a plain string title.
+// Per-page metadata (see each page's `metadata` / `generateMetadata`) provides
+// unique titles, descriptions, canonicals, and Open Graph / Twitter fields.
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.crusit.com"),
+  metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "Crusit — Discover cruising spots worldwide",
-    template: "%s | Crusit",
+    default: DEFAULT_TITLE,
+    template: `%s | ${SITE_NAME}`,
   },
-  ...buildPageMetadata({
-    title: "Crusit — Discover cruising spots worldwide",
-    description:
-      "A global community map for discovering, sharing, and reviewing LGBTQI+ cruising locations with maps, reviews, and street-level detail.",
-    path: "/",
-  }),
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
+  description: DEFAULT_DESCRIPTION,
+  applicationName: SITE_NAME,
+  robots: INDEX_ROBOTS,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "en_US",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
   },
   ...(siteVerification
     ? { verification: { google: siteVerification } }

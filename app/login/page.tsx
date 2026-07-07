@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { signInAction, signUpAction } from "@/app/actions";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Sign in",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export const metadata: Metadata = buildPageMetadata({
+  title: "Sign In | Crusit",
+  description:
+    "Sign in or create a free Crusit account to add gay cruising spots, leave ratings, and write community reviews.",
+  path: "/login",
+  index: false,
+});
 
 type PageProps = {
   searchParams: Promise<{ error?: string; redirectTo?: string }>;

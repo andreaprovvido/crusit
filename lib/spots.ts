@@ -108,6 +108,122 @@ export async function getSpots(params: SpotSearchParams = {}) {
   };
 }
 
+const SPOT_SELECT =
+  "id, slug, name, description, street_address, city, province, region, postal_code, country, created_by, created_at, status, spot_type, rating_avg, rating_count, latitude, longitude";
+
+export type CityFacet = { city: string; country: string; count: number };
+export type CountryFacet = { country: string; count: number };
+export type SpotTypeFacet = { spotType: string; count: number };
+
+/** Distinct cities (with their country and spot count), most spots first. */
+export async function getCityFacets(): Promise<CityFacet[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("spots_public")
+    .select("city, country");
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const map = new Map<string, CityFacet>();
+  for (const row of (data ?? []) as { city: string; country: string }[]) {
+    const city = (row.city ?? "").trim();
+    const country = (row.country ?? "").trim();
+    if (!city) continue;
+    const key = `${city.toLowerCase()}||${country.toLowerCase()}`;
+    const entry = map.get(key) ?? { city, country, count: 0 };
+    entry.count += 1;
+    map.set(key, entry);
+  }
+
+  return [...map.values()].sort((a, b) => b.count - a.count);
+}
+
+/** Distinct countries (with spot count), most spots first. */
+export async function getCountryFacets(): Promise<CountryFacet[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("spots_public").select("country");
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const map = new Map<string, CountryFacet>();
+  for (const row of (data ?? []) as { country: string }[]) {
+    const country = (row.country ?? "").trim();
+    if (!country) continue;
+    const key = country.toLowerCase();
+    const entry = map.get(key) ?? { country, count: 0 };
+    entry.count += 1;
+    map.set(key, entry);
+  }
+
+  return [...map.values()].sort((a, b) => b.count - a.count);
+}
+
+/** Distinct spot types (with spot count), most spots first. */
+export async function getSpotTypeFacets(): Promise<SpotTypeFacet[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("spots_public").select("spot_type");
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const map = new Map<string, SpotTypeFacet>();
+  for (const row of (data ?? []) as { spot_type: string }[]) {
+    const spotType = (row.spot_type ?? "other").trim() || "other";
+    const entry = map.get(spotType) ?? { spotType, count: 0 };
+    entry.count += 1;
+    map.set(spotType, entry);
+  }
+
+  return [...map.values()].sort((a, b) => b.count - a.count);
+}
+
+/** Exact-match spots for a city (optionally scoped to a country). */
+export async function getSpotsByCity({
+  city,
+  country,
+  page = 1,
+}: {
+  city: string;
+  country?: string;
+  page?: number;
+}) {
+  const supabase = await createClient();
+  const safePage = Math.max(1, page);
+  const from = (safePage - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
+  let query = supabase
+    .from("spots_public")
+    .select(SPOT_SELECT, { count: "exact" })
+    .eq("city", city)
+    .order("rating_avg", { ascending: false })
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (country) {
+    query = query.eq("country", country);
+  }
+
+  const { data, error, count } = await query;
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return {
+    spots: (data as SpotRow[] | null)?.map(mapSpot) ?? [],
+    total: count ?? 0,
+    page: safePage,
+    pageSize: PAGE_SIZE,
+    totalPages: Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE)),
+  };
+}
+
 export async function getSpotBySlug(slug: string) {
   const supabase = await createClient();
 

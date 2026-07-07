@@ -7,7 +7,7 @@ import ReviewForm from "@/app/components/reviews/ReviewForm";
 import ReviewList from "@/app/components/reviews/ReviewList";
 import { createClient } from "@/lib/supabase/server";
 import { getReviewsForSpot, getUserReviewForSpot } from "@/lib/reviews";
-import { formatRating, formatSpotAddress, getSiteUrl, spotBreadcrumbJsonLd, spotJsonLd, buildPageMetadata } from "@/lib/seo";
+import { formatRating, formatSpotAddress, getSiteUrl, slugify, spotBreadcrumbJsonLd, spotJsonLd, buildSpotMetadata } from "@/lib/seo";
 import { spotTypeLabel } from "@/lib/spotTypes";
 import { getSpotBySlug } from "@/lib/spots";
 
@@ -21,21 +21,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   try {
     const spot = await getSpotBySlug(slug);
-    if (!spot) return { title: "Spot not found" };
+    if (!spot) {
+      return { title: "Spot not found", robots: { index: false, follow: false } };
+    }
 
-    const title = `${spot.name} — ${spot.city}, ${spot.country}`;
-    const description = `${spot.description.slice(0, 155)}${spot.description.length > 155 ? "…" : ""}`;
-
-    return {
-      title,
-      ...buildPageMetadata({
-        title,
-        description,
-        path: `/spots/${spot.slug}`,
-      }),
-    };
+    return buildSpotMetadata(spot);
   } catch {
-    return { title: "Spot" };
+    return { title: "Spot", robots: { index: false, follow: false } };
   }
 }
 
@@ -88,13 +80,34 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
       </nav>
 
       <header className="mt-4 max-w-3xl">
-        <span className="inline-flex rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
+        <Link
+          href={`/cruising/type/${slugify(spot.spot_type)}`}
+          className="inline-flex rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300 hover:border-emerald-500/40 hover:text-emerald-200"
+        >
           {spotTypeLabel(spot.spot_type)}
-        </span>
+        </Link>
         <h1 className="mt-3 text-4xl font-bold tracking-tight text-white">{spot.name}</h1>
         <p className="mt-2 text-emerald-400">{formatRating(spot.rating_avg, spot.rating_count)}</p>
         <p className="mt-2 text-zinc-400">{formatSpotAddress(spot)}</p>
         <p className="mt-6 text-base leading-relaxed text-zinc-300">{spot.description}</p>
+        <div className="mt-4 flex flex-wrap gap-2 text-sm">
+          {spot.city ? (
+            <Link
+              href={`/cruising/city/${slugify(spot.city)}`}
+              className="rounded-lg border border-zinc-700 px-3 py-1.5 text-zinc-300 hover:border-zinc-500 hover:text-white"
+            >
+              More in {spot.city}
+            </Link>
+          ) : null}
+          {spot.country ? (
+            <Link
+              href={`/cruising/country/${slugify(spot.country)}`}
+              className="rounded-lg border border-zinc-700 px-3 py-1.5 text-zinc-300 hover:border-zinc-500 hover:text-white"
+            >
+              More in {spot.country}
+            </Link>
+          ) : null}
+        </div>
       </header>
 
       <section aria-label="Location map" className="mt-8">
