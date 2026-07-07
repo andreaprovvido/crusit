@@ -123,7 +123,7 @@ export default function Home() {
           </p>
 
           <h1 className="max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-            Discover places with{" "}
+            Discover gay cruising spots with{" "}
             <span className="bg-gradient-to-r from-emerald-300 to-teal-400 bg-clip-text text-transparent">
               real-world detail
             </span>

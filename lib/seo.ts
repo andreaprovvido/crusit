@@ -263,6 +263,16 @@ export function buildBlogIndexMetadata(): Metadata {
   });
 }
 
+/** About page metadata. */
+export function buildAboutMetadata(): Metadata {
+  return buildPageMetadata({
+    title: `About Crusit | Gay Cruising Map for the LGBTQ+ Community`,
+    description:
+      "Crusit is a community map for gay and LGBTQ+ cruising. Discover spots, read reviews, and explore with a mission built on consent, awareness, and safer sex.",
+    path: "/about",
+  });
+}
+
 /** Individual blog post metadata (Open Graph article). */
 export function buildBlogPostMetadata({
   title,
@@ -304,6 +314,27 @@ export function websiteJsonLd(siteUrl: string) {
         urlTemplate: `${siteUrl}/spots?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
+    },
+  };
+}
+
+/** AboutPage JSON-LD for the /about route. */
+export function aboutPageJsonLd(siteUrl: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "@id": `${siteUrl}/about`,
+    name: `About ${SITE_NAME}`,
+    url: `${siteUrl}/about`,
+    description:
+      "Crusit is a community-powered map for gay and LGBTQ+ cruising, built on consent, awareness, and safer sex.",
+    isPartOf: { "@type": "WebSite", name: SITE_NAME, url: siteUrl },
+    about: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: siteUrl,
+      description:
+        "A global community map for gay and LGBTQ+ people to discover cruising spots with maps, reviews, and safety-first guidance.",
     },
   };
 }

@@ -28,8 +28,11 @@ export default async function SiteHeader() {
             <Link href="/spots" className="shrink-0 whitespace-nowrap text-zinc-300 hover:text-white">
               Explore
             </Link>
-            <Link href="/blog" className="hidden shrink-0 whitespace-nowrap text-zinc-300 hover:text-white sm:inline">
+            <Link href="/blog" className="shrink-0 whitespace-nowrap text-zinc-300 hover:text-white">
               Blog
+            </Link>
+            <Link href="/about" className="hidden shrink-0 whitespace-nowrap text-zinc-300 hover:text-white sm:inline">
+              About
             </Link>
             <Link href="/spots/new" className="shrink-0 whitespace-nowrap text-zinc-300 hover:text-white">
               Add
