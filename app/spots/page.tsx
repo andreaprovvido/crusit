@@ -100,13 +100,13 @@ export default async function SpotsPage({ searchParams }: PageProps) {
         </label>
 
         <div className="relative">
-          <div className="flex items-end gap-2 overflow-x-auto pb-1 pr-10">
-            <label className="block shrink-0 text-sm text-zinc-300">
+          <div className="flex items-end gap-3 overflow-x-auto pb-1 pr-8">
+            <label className="flex shrink-0 flex-col text-sm text-zinc-300">
               Type
               <select
                 name="spotType"
                 defaultValue={params.spotType ?? ""}
-                className="mt-2 w-32 rounded-lg border border-zinc-700 bg-zinc-950 px-2.5 py-2 text-white"
+                className="mt-1.5 block w-28 rounded-lg border border-zinc-700 bg-zinc-950 px-2.5 py-2 text-white"
               >
                 <option value="">All types</option>
                 {SPOT_TYPES.map((type) => (
@@ -116,12 +116,12 @@ export default async function SpotsPage({ searchParams }: PageProps) {
                 ))}
               </select>
             </label>
-            <label className="block shrink-0 text-sm text-zinc-300">
+            <label className="flex shrink-0 flex-col text-sm text-zinc-300">
               Country
               <select
                 name="country"
                 defaultValue={params.country ?? ""}
-                className="mt-2 w-36 rounded-lg border border-zinc-700 bg-zinc-950 px-2.5 py-2 text-white"
+                className="mt-1.5 block w-32 rounded-lg border border-zinc-700 bg-zinc-950 px-2.5 py-2 text-white"
               >
                 <option value="">All countries</option>
                 {COUNTRIES.map((country) => (
@@ -131,17 +131,17 @@ export default async function SpotsPage({ searchParams }: PageProps) {
                 ))}
               </select>
             </label>
-            <label className="block shrink-0 text-sm text-zinc-300">
+            <label className="flex shrink-0 flex-col text-sm text-zinc-300">
               Rating
               <select
                 name="minRating"
                 defaultValue={params.minRating ?? ""}
-                className="mt-2 w-24 rounded-lg border border-zinc-700 bg-zinc-950 px-2.5 py-2 text-white"
+                className="mt-1.5 block w-20 rounded-lg border border-zinc-700 bg-zinc-950 px-2.5 py-2 text-white"
               >
                 <option value="">Any</option>
-                <option value="3">3+ stars</option>
-                <option value="4">4+ stars</option>
-                <option value="5">5 stars</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+                <option value="5">5</option>
               </select>
             </label>
             <button
@@ -159,7 +159,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
           </div>
           <div
             aria-hidden
-            className="pointer-events-none absolute bottom-1 right-0 top-7 w-10 rounded-r-lg bg-gradient-to-l from-zinc-900 via-zinc-900/80 to-transparent"
+            className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-zinc-900 to-transparent"
           />
         </div>
       </form>
