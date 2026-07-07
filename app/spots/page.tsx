@@ -156,7 +156,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
 
       <section aria-label="Map view" className="mt-8">
         <h2 className="sr-only">Map</h2>
-        <SpotMapSection spots={spots} />
+        <SpotMapSection spots={spots} worldView />
       </section>
 
       <section aria-label="Spot results" className="mt-10">

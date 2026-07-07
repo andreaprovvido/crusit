@@ -19,9 +19,11 @@ type SpotMapProps = {
   onSelect?: (spot: Spot) => void;
   center?: { latitude: number; longitude: number };
   zoom?: number;
+  worldView?: boolean;
 };
 
 const DEFAULT_CENTER = { latitude: 41.9, longitude: 12.5 };
+const WORLD_VIEW = { latitude: 20, longitude: 0, zoom: 1.3 };
 const MAP_STYLE =
   process.env.NEXT_PUBLIC_MAP_STYLE_URL ??
   "https://tiles.openfreemap.org/styles/liberty";
@@ -33,12 +35,14 @@ export default function SpotMap({
   onSelect,
   center,
   zoom = 5,
+  worldView = false,
 }: SpotMapProps) {
   const mapRef = useRef<MapRef | null>(null);
   const [popupSpot, setPopupSpot] = useState<Spot | null>(null);
 
   const initialView = useMemo(() => {
     if (center) return { ...center, zoom };
+    if (worldView) return WORLD_VIEW;
     if (spots.length > 0) {
       return {
         latitude: spots[0].latitude,
@@ -47,7 +51,7 @@ export default function SpotMap({
       };
     }
     return { ...DEFAULT_CENTER, zoom };
-  }, [center, spots, zoom]);
+  }, [center, spots, zoom, worldView]);
 
   useEffect(() => {
     if (!selectedSlug) return;
@@ -56,7 +60,7 @@ export default function SpotMap({
   }, [selectedSlug, spots]);
 
   useEffect(() => {
-    if (!mapRef.current || center || spots.length < 2) return;
+    if (!mapRef.current || center || worldView || spots.length < 2) return;
 
     const bounds = spots.reduce(
       (acc, spot) => ({
@@ -84,7 +88,7 @@ export default function SpotMap({
         duration: 0,
       },
     );
-  }, [center, spots]);
+  }, [center, spots, worldView]);
 
   function handleMarkerClick(event: { originalEvent: MouseEvent }, spot: Spot) {
     event.originalEvent.stopPropagation();
