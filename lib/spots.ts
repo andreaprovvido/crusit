@@ -139,3 +139,20 @@ export async function getAllSpotSlugs() {
 
   return (data ?? []).map((row) => row.slug as string);
 }
+
+export async function getSitemapSpots() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("spots_public")
+    .select("slug, created_at")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []).map((row) => ({
+    slug: row.slug as string,
+    createdAt: row.created_at as string,
+  }));
+}

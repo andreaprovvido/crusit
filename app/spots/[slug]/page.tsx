@@ -6,7 +6,7 @@ import ReviewForm from "@/app/components/reviews/ReviewForm";
 import ReviewList from "@/app/components/reviews/ReviewList";
 import { createClient } from "@/lib/supabase/server";
 import { getReviewsForSpot, getUserReviewForSpot } from "@/lib/reviews";
-import { formatRating, formatSpotAddress, getSiteUrl, spotJsonLd } from "@/lib/seo";
+import { formatRating, formatSpotAddress, getSiteUrl, spotBreadcrumbJsonLd, spotJsonLd, buildPageMetadata } from "@/lib/seo";
 import { spotTypeLabel } from "@/lib/spotTypes";
 import { getSpotBySlug } from "@/lib/spots";
 
@@ -22,12 +22,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const spot = await getSpotBySlug(slug);
     if (!spot) return { title: "Spot not found" };
 
+    const title = `${spot.name} — ${spot.city}, ${spot.country}`;
+    const description = `${spot.description.slice(0, 155)}${spot.description.length > 155 ? "…" : ""}`;
+
     return {
-      title: `${spot.name} — ${spot.city}, ${spot.province}, ${spot.country}`,
-      description: spot.description,
-      alternates: {
-        canonical: `/spots/${spot.slug}`,
-      },
+      title,
+      ...buildPageMetadata({
+        title,
+        description,
+        path: `/spots/${spot.slug}`,
+      }),
     };
   } catch {
     return { title: "Spot" };
@@ -63,6 +67,12 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(spotJsonLd(spot, siteUrl)),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(spotBreadcrumbJsonLd(spot, siteUrl)),
         }}
       />
 

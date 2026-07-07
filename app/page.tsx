@@ -1,4 +1,5 @@
 import RainbowMeshBackground from "@/app/components/RainbowMeshBackground";
+import { getSiteUrl, websiteJsonLd } from "@/lib/seo";
 
 const features = [
   {
@@ -97,8 +98,16 @@ const features = [
 ];
 
 export default function Home() {
+  const siteUrl = getSiteUrl();
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-zinc-950 text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(websiteJsonLd(siteUrl)),
+        }}
+      />
       <RainbowMeshBackground variant="home" />
 
       <main className="relative z-10">

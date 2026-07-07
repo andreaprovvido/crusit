@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import SiteHeader from "./components/SiteHeader";
+import { buildPageMetadata } from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,8 +23,23 @@ export const metadata: Metadata = {
     default: "Crusit — Discover cruising spots worldwide",
     template: "%s | Crusit",
   },
-  description:
-    "A global community map for discovering, sharing, and reviewing cruising locations.",
+  ...buildPageMetadata({
+    title: "Crusit — Discover cruising spots worldwide",
+    description:
+      "A global community map for discovering, sharing, and reviewing LGBTQI+ cruising locations with maps, reviews, and street-level detail.",
+    path: "/",
+  }),
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   ...(siteVerification
     ? { verification: { google: siteVerification } }
     : {}),

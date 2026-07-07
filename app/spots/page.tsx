@@ -7,13 +7,16 @@ import { COUNTRIES } from "@/lib/countries";
 import { SPOT_TYPES } from "@/lib/spotTypes";
 import { getSpots } from "@/lib/spots";
 
+import { buildPageMetadata } from "@/lib/seo";
+
 export const metadata: Metadata = {
   title: "Explore cruising spots",
-  description:
-    "Browse cruising spots worldwide with ratings, reviews, and an interactive map.",
-  alternates: {
-    canonical: "/spots",
-  },
+  ...buildPageMetadata({
+    title: "Explore cruising spots",
+    description:
+      "Browse LGBTQI+ cruising spots worldwide with community ratings, reviews, filters by country and type, and an interactive map.",
+    path: "/spots",
+  }),
 };
 
 type PageProps = {
@@ -97,13 +100,13 @@ export default async function SpotsPage({ searchParams }: PageProps) {
         </label>
 
         <div className="relative">
-          <div className="-mx-1 flex items-end gap-2 overflow-x-auto px-1 pb-1 pr-8">
+          <div className="flex items-end gap-2 overflow-x-auto pb-1 pr-10">
             <label className="block shrink-0 text-sm text-zinc-300">
               Type
               <select
                 name="spotType"
                 defaultValue={params.spotType ?? ""}
-                className="mt-2 w-full min-w-28 rounded-lg border border-zinc-700 bg-zinc-950 px-2.5 py-2 text-white"
+                className="mt-2 w-32 rounded-lg border border-zinc-700 bg-zinc-950 px-2.5 py-2 text-white"
               >
                 <option value="">All types</option>
                 {SPOT_TYPES.map((type) => (
@@ -118,7 +121,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
               <select
                 name="country"
                 defaultValue={params.country ?? ""}
-                className="mt-2 w-full min-w-32 rounded-lg border border-zinc-700 bg-zinc-950 px-2.5 py-2 text-white"
+                className="mt-2 w-36 rounded-lg border border-zinc-700 bg-zinc-950 px-2.5 py-2 text-white"
               >
                 <option value="">All countries</option>
                 {COUNTRIES.map((country) => (
@@ -129,11 +132,11 @@ export default async function SpotsPage({ searchParams }: PageProps) {
               </select>
             </label>
             <label className="block shrink-0 text-sm text-zinc-300">
-              Min rating
+              Rating
               <select
                 name="minRating"
                 defaultValue={params.minRating ?? ""}
-                className="mt-2 w-full min-w-24 rounded-lg border border-zinc-700 bg-zinc-950 px-2.5 py-2 text-white"
+                className="mt-2 w-24 rounded-lg border border-zinc-700 bg-zinc-950 px-2.5 py-2 text-white"
               >
                 <option value="">Any</option>
                 <option value="3">3+ stars</option>
@@ -156,7 +159,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
           </div>
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-zinc-900 to-transparent"
+            className="pointer-events-none absolute bottom-1 right-0 top-7 w-10 rounded-r-lg bg-gradient-to-l from-zinc-900 via-zinc-900/80 to-transparent"
           />
         </div>
       </form>
