@@ -9,6 +9,7 @@ import Map, {
   type MapRef,
 } from "react-map-gl/maplibre";
 import type { Spot } from "@/lib/types";
+import { spotTypeLabel } from "@/lib/spotTypes";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 type SpotMapProps = {
@@ -141,7 +142,10 @@ export default function SpotMap({
           >
             <div className="space-y-3">
               <div>
-                <h3 className="text-sm font-semibold text-white">{popupSpot.name}</h3>
+                <span className="inline-flex rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+                  {spotTypeLabel(popupSpot.spot_type)}
+                </span>
+                <h3 className="mt-1.5 text-sm font-semibold text-white">{popupSpot.name}</h3>
                 <p className="mt-1 line-clamp-4 text-sm leading-relaxed text-zinc-300">
                   {popupSpot.description}
                 </p>

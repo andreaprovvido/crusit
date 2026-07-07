@@ -17,6 +17,7 @@ type SpotRow = {
   created_by: string | null;
   created_at: string;
   status: "published" | "hidden";
+  spot_type: string;
   rating_avg: number;
   rating_count: number;
   latitude: number;
@@ -40,6 +41,7 @@ function mapSpot(row: SpotRow): Spot {
     created_by: row.created_by,
     created_at: row.created_at,
     status: row.status,
+    spot_type: row.spot_type ?? "other",
     rating_avg: Number(row.rating_avg),
     rating_count: row.rating_count,
   };
@@ -54,7 +56,7 @@ export async function getSpots(params: SpotSearchParams = {}) {
   let query = supabase
     .from("spots_public")
     .select(
-      "id, slug, name, description, street_address, city, province, region, postal_code, country, created_by, created_at, status, rating_avg, rating_count, latitude, longitude",
+      "id, slug, name, description, street_address, city, province, region, postal_code, country, created_by, created_at, status, spot_type, rating_avg, rating_count, latitude, longitude",
       { count: "exact" },
     )
     .order("created_at", { ascending: false })
@@ -83,6 +85,10 @@ export async function getSpots(params: SpotSearchParams = {}) {
     query = query.eq("country", params.country.trim());
   }
 
+  if (params.spotType) {
+    query = query.eq("spot_type", params.spotType.trim());
+  }
+
   if (params.minRating) {
     query = query.gte("rating_avg", params.minRating);
   }
@@ -108,7 +114,7 @@ export async function getSpotBySlug(slug: string) {
   const { data, error } = await supabase
     .from("spots_public")
     .select(
-      "id, slug, name, description, street_address, city, province, region, postal_code, country, created_by, created_at, status, rating_avg, rating_count, latitude, longitude",
+      "id, slug, name, description, street_address, city, province, region, postal_code, country, created_by, created_at, status, spot_type, rating_avg, rating_count, latitude, longitude",
     )
     .eq("slug", slug)
     .maybeSingle();

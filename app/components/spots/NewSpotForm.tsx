@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import LocationPickerSection from "@/app/components/map/LocationPickerSection";
+import { DEFAULT_SPOT_TYPE, SPOT_TYPES } from "@/lib/spotTypes";
 
 type NewSpotFormProps = {
   action: (formData: FormData) => void | Promise<void>;
@@ -168,6 +169,7 @@ function normalizeSuggestion(feature: MapTilerFeature): AddressSuggestion | null
 export default function NewSpotForm({ action }: NewSpotFormProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [spotType, setSpotType] = useState<string>(DEFAULT_SPOT_TYPE);
   const [search, setSearch] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
   const [city, setCity] = useState("");
@@ -300,6 +302,22 @@ export default function NewSpotForm({ action }: NewSpotFormProps) {
           onChange={(event) => setName(event.target.value)}
           className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
         />
+      </label>
+
+      <label className="block text-sm text-zinc-300">
+        Type of spot
+        <select
+          name="spotType"
+          value={spotType}
+          onChange={(event) => setSpotType(event.target.value)}
+          className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
+        >
+          {SPOT_TYPES.map((type) => (
+            <option key={type.value} value={type.value}>
+              {type.label}
+            </option>
+          ))}
+        </select>
       </label>
 
       <label className="block text-sm text-zinc-300">

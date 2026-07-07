@@ -14,6 +14,7 @@ export type Spot = {
   created_by: string | null;
   created_at: string;
   status: "published" | "hidden";
+  spot_type: string;
   rating_avg: number;
   rating_count: number;
 };
@@ -35,6 +36,7 @@ export type SpotSearchParams = {
   region?: string;
   city?: string;
   country?: string;
+  spotType?: string;
   minRating?: number;
   bbox?: string;
   page?: number;

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { buildSpotSlug } from "@/lib/slug";
+import { DEFAULT_SPOT_TYPE, isSpotType } from "@/lib/spotTypes";
 import { createClient } from "@/lib/supabase/server";
 
 function parseRating(value: FormDataEntryValue | null) {
@@ -67,6 +68,8 @@ export async function createSpotAction(formData: FormData) {
   const region = String(formData.get("region") ?? "").trim();
   const postalCode = String(formData.get("postalCode") ?? "").trim();
   const country = String(formData.get("country") ?? "").trim();
+  const spotTypeRaw = String(formData.get("spotType") ?? "").trim();
+  const spotType = isSpotType(spotTypeRaw) ? spotTypeRaw : DEFAULT_SPOT_TYPE;
   const latitude = Number(formData.get("latitude"));
   const longitude = Number(formData.get("longitude"));
 
@@ -93,6 +96,7 @@ export async function createSpotAction(formData: FormData) {
     p_region: region,
     p_postal_code: postalCode,
     p_country: country,
+    p_spot_type: spotType,
     p_latitude: latitude,
     p_longitude: longitude,
   });

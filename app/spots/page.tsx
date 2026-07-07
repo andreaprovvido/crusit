@@ -4,6 +4,7 @@ import Link from "next/link";
 import SpotMapSection from "@/app/components/map/SpotMapSection";
 import SpotList from "@/app/components/spots/SpotList";
 import { COUNTRIES } from "@/lib/countries";
+import { SPOT_TYPES } from "@/lib/spotTypes";
 import { getSpots } from "@/lib/spots";
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ type PageProps = {
   searchParams: Promise<{
     q?: string;
     country?: string;
+    spotType?: string;
     minRating?: string;
     page?: string;
   }>;
@@ -27,12 +29,14 @@ type PageProps = {
 function buildFilterQuery(params: {
   q?: string;
   country?: string;
+  spotType?: string;
   minRating?: string;
   page?: string;
 }) {
   const query = new URLSearchParams();
   if (params.q) query.set("q", params.q);
   if (params.country) query.set("country", params.country);
+  if (params.spotType) query.set("spotType", params.spotType);
   if (params.minRating) query.set("minRating", params.minRating);
   if (params.page) query.set("page", params.page);
   return query;
@@ -56,6 +60,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
     spotsResult = await getSpots({
       q: params.q,
       country: params.country,
+      spotType: params.spotType,
       minRating: Number.isNaN(minRating) ? undefined : minRating,
       page: Number.isNaN(page) ? 1 : page,
     });
@@ -80,7 +85,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
         </p>
       </div>
 
-      <form method="get" className="mt-8 grid gap-4 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 md:grid-cols-[1fr_auto_auto]">
+      <form method="get" className="mt-8 grid gap-4 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 md:grid-cols-[1fr_auto_auto_auto]">
         <label className="block text-sm text-zinc-300">
           Search
           <input
@@ -89,6 +94,21 @@ export default async function SpotsPage({ searchParams }: PageProps) {
             placeholder="Search by name, address, or location"
             className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
           />
+        </label>
+        <label className="block text-sm text-zinc-300">
+          Type
+          <select
+            name="spotType"
+            defaultValue={params.spotType ?? ""}
+            className="mt-2 w-full min-w-40 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
+          >
+            <option value="">All types</option>
+            {SPOT_TYPES.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </select>
         </label>
         <label className="block text-sm text-zinc-300">
           Country
@@ -118,7 +138,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
             <option value="5">5 stars</option>
           </select>
         </label>
-        <div className="md:col-span-3">
+        <div className="md:col-span-4">
           <button
             type="submit"
             className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-black hover:bg-emerald-400"

@@ -16,6 +16,7 @@ create table if not exists public.spots (
   created_by uuid references auth.users(id) on delete set null,
   created_at timestamptz not null default now(),
   status text not null default 'published' check (status in ('published', 'hidden')),
+  spot_type text not null default 'other',
   rating_avg numeric(3, 2) not null default 0,
   rating_count integer not null default 0
 );
@@ -24,6 +25,7 @@ alter table public.spots add column if not exists street_address text not null d
 alter table public.spots add column if not exists province text not null default '';
 alter table public.spots add column if not exists region text not null default '';
 alter table public.spots add column if not exists postal_code text not null default '';
+alter table public.spots add column if not exists spot_type text not null default 'other';
 
 create index if not exists spots_location_idx on public.spots using gist (location);
 create index if not exists spots_slug_idx on public.spots (slug);
@@ -165,6 +167,7 @@ select
   created_by,
   created_at,
   status,
+  spot_type,
   rating_avg,
   rating_count,
   st_y(location::geometry) as latitude,
@@ -195,6 +198,20 @@ drop function if exists public.create_spot(
   double precision
 );
 
+drop function if exists public.create_spot(
+  text,
+  text,
+  text,
+  text,
+  text,
+  text,
+  text,
+  text,
+  text,
+  double precision,
+  double precision
+);
+
 create function public.create_spot(
   p_slug text,
   p_name text,
@@ -205,6 +222,7 @@ create function public.create_spot(
   p_region text,
   p_postal_code text,
   p_country text,
+  p_spot_type text,
   p_latitude double precision,
   p_longitude double precision
 )
@@ -230,6 +248,7 @@ begin
     region,
     postal_code,
     country,
+    spot_type,
     location,
     created_by
   )
@@ -243,6 +262,7 @@ begin
     p_region,
     p_postal_code,
     p_country,
+    coalesce(nullif(p_spot_type, ''), 'other'),
     st_setsrid(st_makepoint(p_longitude, p_latitude), 4326)::geography,
     auth.uid()
   )
@@ -254,6 +274,7 @@ $$;
 
 grant select on public.spots_public to anon, authenticated;
 grant execute on function public.create_spot(
+  text,
   text,
   text,
   text,

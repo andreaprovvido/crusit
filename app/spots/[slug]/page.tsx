@@ -7,6 +7,7 @@ import ReviewList from "@/app/components/reviews/ReviewList";
 import { createClient } from "@/lib/supabase/server";
 import { getReviewsForSpot, getUserReviewForSpot } from "@/lib/reviews";
 import { formatRating, formatSpotAddress, getSiteUrl, spotJsonLd } from "@/lib/seo";
+import { spotTypeLabel } from "@/lib/spotTypes";
 import { getSpotBySlug } from "@/lib/spots";
 
 type PageProps = {
@@ -74,7 +75,10 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
       </nav>
 
       <header className="mt-4 max-w-3xl">
-        <h1 className="text-4xl font-bold tracking-tight text-white">{spot.name}</h1>
+        <span className="inline-flex rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
+          {spotTypeLabel(spot.spot_type)}
+        </span>
+        <h1 className="mt-3 text-4xl font-bold tracking-tight text-white">{spot.name}</h1>
         <p className="mt-2 text-emerald-400">{formatRating(spot.rating_avg, spot.rating_count)}</p>
         <p className="mt-2 text-zinc-400">{formatSpotAddress(spot)}</p>
         <p className="mt-6 text-base leading-relaxed text-zinc-300">{spot.description}</p>
