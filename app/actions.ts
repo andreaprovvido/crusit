@@ -5,6 +5,14 @@ import { redirect } from "next/navigation";
 import { buildSpotSlug } from "@/lib/slug";
 import { DEFAULT_SPOT_TYPE, isSpotType } from "@/lib/spotTypes";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { isValidUsername, normalizeUsername, USERNAME_RULE } from "@/lib/username";
+
+function loginError(message: string, redirectTo: string) {
+  redirect(
+    `/login?error=${encodeURIComponent(message)}&redirectTo=${encodeURIComponent(redirectTo)}`,
+  );
+}
 
 function parseRating(value: FormDataEntryValue | null) {
   const rating = Number(value);
@@ -15,15 +23,42 @@ function parseRating(value: FormDataEntryValue | null) {
 }
 
 export async function signInAction(formData: FormData) {
-  const email = String(formData.get("email") ?? "").trim();
+  const identifier = String(formData.get("identifier") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const redirectTo = String(formData.get("redirectTo") ?? "/spots");
+
+  if (!identifier || !password) {
+    loginError("Enter your email/username and password.", redirectTo);
+  }
+
+  // Resolve the email when the user signs in with a username.
+  let email = identifier;
+  if (!identifier.includes("@")) {
+    const admin = createAdminClient();
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("id")
+      .ilike("username", identifier)
+      .maybeSingle();
+
+    if (!profile) {
+      loginError("Invalid credentials.", redirectTo);
+    }
+
+    const { data: userRes, error: lookupError } = await admin.auth.admin.getUserById(
+      profile!.id,
+    );
+    if (lookupError || !userRes?.user?.email) {
+      loginError("Invalid credentials.", redirectTo);
+    }
+    email = userRes!.user!.email!;
+  }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}&redirectTo=${encodeURIComponent(redirectTo)}`);
+    loginError(error.message, redirectTo);
   }
 
   redirect(redirectTo);
@@ -32,16 +67,110 @@ export async function signInAction(formData: FormData) {
 export async function signUpAction(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const username = normalizeUsername(String(formData.get("username") ?? ""));
   const redirectTo = String(formData.get("redirectTo") ?? "/spots");
 
+  if (!isValidUsername(username)) {
+    loginError(`Invalid username. ${USERNAME_RULE}`, redirectTo);
+  }
+
+  const admin = createAdminClient();
+
+  // Pre-check availability (the unique index is the real guard against races).
+  const { data: taken } = await admin
+    .from("profiles")
+    .select("id")
+    .ilike("username", username)
+    .maybeSingle();
+  if (taken) {
+    loginError("That username is already taken.", redirectTo);
+  }
+
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({ email, password });
 
   if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}&redirectTo=${encodeURIComponent(redirectTo)}`);
+    loginError(error.message, redirectTo);
+  }
+
+  const userId = data.user?.id;
+  if (userId) {
+    const { error: profileError } = await admin
+      .from("profiles")
+      .insert({ id: userId, username });
+
+    if (profileError) {
+      // Most likely a race on the unique username: roll back the auth user.
+      await admin.auth.admin.deleteUser(userId).catch(() => {});
+      loginError("That username is already taken.", redirectTo);
+    }
   }
 
   redirect(redirectTo);
+}
+
+export async function updateUsernameAction(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login?redirectTo=/profile");
+
+  const username = normalizeUsername(String(formData.get("username") ?? ""));
+  if (!isValidUsername(username)) {
+    redirect(`/profile?error=${encodeURIComponent(`Invalid username. ${USERNAME_RULE}`)}`);
+  }
+
+  const { data: existing } = await supabase
+    .from("profiles")
+    .select("id")
+    .ilike("username", username)
+    .neq("id", user.id)
+    .maybeSingle();
+  if (existing) {
+    redirect(`/profile?error=${encodeURIComponent("That username is already taken.")}`);
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .upsert({ id: user.id, username }, { onConflict: "id" });
+  if (error) {
+    redirect(`/profile?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/profile");
+  redirect("/profile?saved=username");
+}
+
+export async function changePasswordAction(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user?.email) redirect("/login?redirectTo=/profile");
+
+  const currentPassword = String(formData.get("currentPassword") ?? "");
+  const newPassword = String(formData.get("newPassword") ?? "");
+
+  if (newPassword.length < 6) {
+    redirect(`/profile?error=${encodeURIComponent("New password must be at least 6 characters.")}`);
+  }
+
+  // Verify the current password by re-authenticating.
+  const { error: verifyError } = await supabase.auth.signInWithPassword({
+    email: user.email!,
+    password: currentPassword,
+  });
+  if (verifyError) {
+    redirect(`/profile?error=${encodeURIComponent("Your current password is incorrect.")}`);
+  }
+
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) {
+    redirect(`/profile?error=${encodeURIComponent(error.message)}`);
+  }
+
+  redirect("/profile?saved=password");
 }
 
 export async function signOutAction() {

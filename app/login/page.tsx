@@ -36,10 +36,11 @@ export default async function LoginPage({ searchParams }: PageProps) {
         <h2 className="text-lg font-semibold text-white">Sign in</h2>
         <input type="hidden" name="redirectTo" value={redirectTo} />
         <label className="block text-sm text-zinc-300">
-          Email
+          Email or username
           <input
-            name="email"
-            type="email"
+            name="identifier"
+            type="text"
+            autoComplete="username"
             required
             className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
           />
@@ -65,11 +66,29 @@ export default async function LoginPage({ searchParams }: PageProps) {
         <h2 className="text-lg font-semibold text-white">Create account</h2>
         <input type="hidden" name="redirectTo" value={redirectTo} />
         <label className="block text-sm text-zinc-300">
+          Username
+          <input
+            name="username"
+            type="text"
+            required
+            minLength={3}
+            maxLength={20}
+            pattern="[A-Za-z0-9_]{3,20}"
+            autoComplete="username"
+            placeholder="e.g. cruiser_92"
+            className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
+          />
+          <span className="mt-1 block text-xs text-zinc-500">
+            Shown publicly on your reviews. 3–20 letters, numbers, or underscores.
+          </span>
+        </label>
+        <label className="block text-sm text-zinc-300">
           Email
           <input
             name="email"
             type="email"
             required
+            autoComplete="email"
             className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
           />
         </label>
@@ -80,6 +99,7 @@ export default async function LoginPage({ searchParams }: PageProps) {
             type="password"
             required
             minLength={6}
+            autoComplete="new-password"
             className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
           />
         </label>

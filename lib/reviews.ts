@@ -13,11 +13,7 @@ type ReviewRow = {
   updated_at: string;
 };
 
-function authorLabel(userId: string) {
-  return `User ${userId.slice(0, 8)}`;
-}
-
-function mapReview(row: ReviewRow): Review {
+function mapReview(row: ReviewRow, username?: string | null): Review {
   return {
     id: row.id,
     spot_id: row.spot_id,
@@ -26,8 +22,29 @@ function mapReview(row: ReviewRow): Review {
     body: row.body,
     created_at: row.created_at,
     updated_at: row.updated_at,
-    author_label: authorLabel(row.user_id),
+    author_label: username || "Member",
   };
+}
+
+/** Maps user ids to their public usernames (privacy: never expose emails). */
+async function getUsernames(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userIds: string[],
+): Promise<Map<string, string>> {
+  const unique = [...new Set(userIds)];
+  if (unique.length === 0) return new Map();
+
+  const { data } = await supabase
+    .from("profiles")
+    .select("id, username")
+    .in("id", unique);
+
+  return new Map(
+    ((data as { id: string; username: string }[] | null) ?? []).map((row) => [
+      row.id,
+      row.username,
+    ]),
+  );
 }
 
 export async function getReviewsForSpot(spotId: string, page = 1) {
@@ -49,8 +66,14 @@ export async function getReviewsForSpot(spotId: string, page = 1) {
     throw new Error(error.message);
   }
 
+  const rows = (data as ReviewRow[] | null) ?? [];
+  const usernames = await getUsernames(
+    supabase,
+    rows.map((row) => row.user_id),
+  );
+
   return {
-    reviews: (data as ReviewRow[] | null)?.map(mapReview) ?? [],
+    reviews: rows.map((row) => mapReview(row, usernames.get(row.user_id))),
     total: count ?? 0,
     page: safePage,
     pageSize: PAGE_SIZE,

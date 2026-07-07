@@ -135,6 +135,7 @@ export type AdminReview = {
   created_at: string;
   spot_name: string | null;
   spot_slug: string | null;
+  username: string | null;
 };
 
 export async function listAdminReviews({ page = 1 }: { page?: number }) {
@@ -163,7 +164,21 @@ export async function listAdminReviews({ page = 1 }: { page?: number }) {
     spots: { name: string; slug: string } | { name: string; slug: string }[] | null;
   };
 
-  const reviews: AdminReview[] = ((data as Row[] | null) ?? []).map((row) => {
+  const rows = (data as Row[] | null) ?? [];
+
+  const userIds = [...new Set(rows.map((row) => row.user_id))];
+  const usernameMap = new Map<string, string>();
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, username")
+      .in("id", userIds);
+    for (const profile of (profiles as { id: string; username: string }[] | null) ?? []) {
+      usernameMap.set(profile.id, profile.username);
+    }
+  }
+
+  const reviews: AdminReview[] = rows.map((row) => {
     const spot = Array.isArray(row.spots) ? row.spots[0] : row.spots;
     return {
       id: row.id,
@@ -174,6 +189,7 @@ export async function listAdminReviews({ page = 1 }: { page?: number }) {
       created_at: row.created_at,
       spot_name: spot?.name ?? null,
       spot_slug: spot?.slug ?? null,
+      username: usernameMap.get(row.user_id) ?? null,
     };
   });
 

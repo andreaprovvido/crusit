@@ -5,16 +5,35 @@ import { useState } from "react";
 import Logo from "@/app/components/Logo";
 
 type SiteHeaderBarProps = {
-  userEmail: string | null;
-  signOutAction: () => Promise<void>;
+  isAuthenticated: boolean;
+  username: string | null;
 };
 
+function ProfileGlyph({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      className={className}
+      aria-hidden
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 19.5a7.5 7.5 0 0 1 15 0"
+      />
+    </svg>
+  );
+}
+
 export default function SiteHeaderBar({
-  userEmail,
-  signOutAction,
+  isAuthenticated,
+  username,
 }: SiteHeaderBarProps) {
   const [open, setOpen] = useState(false);
-  const isAuthenticated = Boolean(userEmail);
 
   const close = () => setOpen(false);
 
@@ -69,17 +88,17 @@ export default function SiteHeaderBar({
             <span className="whitespace-nowrap">Add new spot</span>
           </Link>
           {isAuthenticated ? (
-            <>
-              <span className="hidden max-w-32 truncate text-zinc-400 md:inline">{userEmail}</span>
-              <form action={signOutAction}>
-                <button
-                  type="submit"
-                  className="rounded-lg border border-zinc-700 px-3 py-2 whitespace-nowrap text-zinc-300 hover:border-zinc-500 hover:text-white"
-                >
-                  Sign out
-                </button>
-              </form>
-            </>
+            <Link
+              href="/profile"
+              aria-label="Your profile"
+              title={username ?? "Your profile"}
+              className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-zinc-700 px-2.5 py-2 text-zinc-300 transition hover:border-zinc-500 hover:text-white"
+            >
+              <ProfileGlyph className="size-5" />
+              {username ? (
+                <span className="hidden max-w-32 truncate md:inline">{username}</span>
+              ) : null}
+            </Link>
           ) : (
             <Link
               href="/login"
@@ -90,41 +109,52 @@ export default function SiteHeaderBar({
           )}
         </div>
 
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-controls="mobile-header-menu"
-          aria-label={open ? "Close menu" : "Open menu"}
-          onClick={() => setOpen((value) => !value)}
-          className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg border border-zinc-700 px-3 text-sm font-medium text-zinc-300 transition hover:border-zinc-500 hover:text-white sm:hidden"
-        >
-          <span>Menu</span>
-          {open ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              className="size-5"
-              aria-hidden
+        <div className="flex shrink-0 items-center gap-2 sm:hidden">
+          {isAuthenticated ? (
+            <Link
+              href="/profile"
+              aria-label="Your profile"
+              className="inline-flex size-10 items-center justify-center rounded-lg border border-zinc-700 text-zinc-300 transition hover:border-zinc-500 hover:text-white"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              className="size-5"
-              aria-hidden
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
-            </svg>
-          )}
-        </button>
+              <ProfileGlyph className="size-5" />
+            </Link>
+          ) : null}
+          <button
+            type="button"
+            aria-expanded={open}
+            aria-controls="mobile-header-menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen((value) => !value)}
+            className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg border border-zinc-700 px-3 text-sm font-medium text-zinc-300 transition hover:border-zinc-500 hover:text-white"
+          >
+            <span>Menu</span>
+            {open ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="size-5"
+                aria-hidden
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="size-5"
+                aria-hidden
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
 
       {open ? (
@@ -175,15 +205,9 @@ export default function SiteHeaderBar({
               </li>
               <li>
                 {isAuthenticated ? (
-                  <form action={signOutAction} className="h-full">
-                    <button
-                      type="submit"
-                      className={`${menuLinkClass} h-full w-full`}
-                      onClick={close}
-                    >
-                      Sign out
-                    </button>
-                  </form>
+                  <Link href="/profile" className={menuLinkClass} onClick={close}>
+                    Profile
+                  </Link>
                 ) : (
                   <Link href="/login" className={menuLinkClass} onClick={close}>
                     Sign in

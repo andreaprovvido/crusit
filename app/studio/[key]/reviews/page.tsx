@@ -71,7 +71,10 @@ export default async function StudioReviewsPage({ params, searchParams }: PagePr
                   <span className="text-xs text-zinc-500">· {formatDate(review.created_at)}</span>
                 </div>
                 <p className="mt-2 text-sm text-zinc-300">{review.body}</p>
-                <p className="mt-2 text-xs text-zinc-600">User {review.user_id.slice(0, 8)}</p>
+                <p className="mt-2 text-xs text-zinc-600">
+                  {review.username ? `@${review.username}` : "No username"} ·{" "}
+                  {review.user_id.slice(0, 8)}
+                </p>
               </div>
               <form action={adminDeleteReviewAction}>
                 <input type="hidden" name="key" value={key} />
