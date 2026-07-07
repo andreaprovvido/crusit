@@ -35,9 +35,10 @@ type ReviewListProps = {
   spotSlug: string;
   sort: ReviewSort;
   page: number;
+  total: number;
 };
 
-function SortLink({
+function SortTab({
   spotSlug,
   target,
   current,
@@ -54,10 +55,10 @@ function SortLink({
   return (
     <Link
       href={href}
-      aria-current={isActive ? "true" : undefined}
-      className={`rounded-full px-3 py-1 text-sm transition ${
+      aria-current={isActive ? "page" : undefined}
+      className={`rounded-t-lg px-4 py-2.5 text-sm font-medium transition ${
         isActive
-          ? "bg-emerald-500/15 text-emerald-300"
+          ? "border border-b-0 border-zinc-700 bg-zinc-900/60 text-white"
           : "text-zinc-400 hover:text-white"
       }`}
     >
@@ -66,60 +67,75 @@ function SortLink({
   );
 }
 
-export default function ReviewList({ reviews, spotSlug, sort, page }: ReviewListProps) {
+export default function ReviewList({
+  reviews,
+  spotSlug,
+  sort,
+  page,
+  total,
+}: ReviewListProps) {
   return (
-    <div>
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-zinc-500">Sort by</span>
-        <SortLink spotSlug={spotSlug} target="recent" current={sort} label="Recent" />
-        <SortLink spotSlug={spotSlug} target="likes" current={sort} label="Most liked" />
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-900/30">
+      <div className="flex items-end gap-1 border-b border-zinc-800 px-3 pt-3">
+        <SortTab spotSlug={spotSlug} target="recent" current={sort} label="Recent" />
+        <SortTab spotSlug={spotSlug} target="likes" current={sort} label="Most liked" />
+        {total > 0 ? (
+          <span className="mb-2 ml-auto text-xs text-zinc-500">{total} total</span>
+        ) : null}
       </div>
 
-      {reviews.length === 0 ? (
-        <p className="mt-4 text-sm text-zinc-400">
-          No reviews yet. Be the first to share your experience.
-        </p>
-      ) : (
-        <ol className="mt-4 space-y-4">
-          {reviews.map((review) => (
-            <li
-              key={review.id}
-              className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-sm font-medium text-white">{review.author_label}</p>
-                <time className="text-xs text-zinc-500" dateTime={review.created_at}>
-                  {new Date(review.created_at).toLocaleDateString()}
-                </time>
-              </div>
-              <Stars rating={review.rating} />
-              <p className="mt-3 text-sm leading-relaxed text-zinc-300">{review.body}</p>
+      <div
+        className="max-h-[28rem] overflow-y-auto p-4 [-ms-overflow-style:auto] [scrollbar-width:thin]"
+        aria-label="Comments list"
+      >
+        {reviews.length === 0 ? (
+          <p className="text-sm text-zinc-400">
+            No comments yet. Be the first to share your experience.
+          </p>
+        ) : (
+          <ol className="space-y-3">
+            {reviews.map((review) => (
+              <li
+                key={review.id}
+                className="rounded-xl border border-zinc-800 bg-zinc-950/50 p-4"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-sm font-medium text-white">{review.author_label}</p>
+                  <time className="text-xs text-zinc-500" dateTime={review.created_at}>
+                    {new Date(review.created_at).toLocaleDateString()}
+                  </time>
+                </div>
+                <Stars rating={review.rating} />
+                <p className="mt-3 text-sm leading-relaxed text-zinc-300">{review.body}</p>
 
-              <div className="mt-3">
-                <form action={toggleReviewLikeAction}>
-                  <input type="hidden" name="spotSlug" value={spotSlug} />
-                  <input type="hidden" name="reviewId" value={review.id} />
-                  <input type="hidden" name="sort" value={sort} />
-                  <input type="hidden" name="page" value={String(page)} />
-                  <button
-                    type="submit"
-                    aria-pressed={review.liked_by_me}
-                    aria-label={review.liked_by_me ? "Unlike this review" : "Like this review"}
-                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition ${
-                      review.liked_by_me
-                        ? "border-pink-500/40 bg-pink-500/10 text-pink-300"
-                        : "border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-white"
-                    }`}
-                  >
-                    <HeartIcon filled={review.liked_by_me} />
-                    <span>{review.like_count}</span>
-                  </button>
-                </form>
-              </div>
-            </li>
-          ))}
-        </ol>
-      )}
+                <div className="mt-3">
+                  <form action={toggleReviewLikeAction}>
+                    <input type="hidden" name="spotSlug" value={spotSlug} />
+                    <input type="hidden" name="reviewId" value={review.id} />
+                    <input type="hidden" name="sort" value={sort} />
+                    <input type="hidden" name="page" value={String(page)} />
+                    <button
+                      type="submit"
+                      aria-pressed={review.liked_by_me}
+                      aria-label={
+                        review.liked_by_me ? "Unlike this comment" : "Like this comment"
+                      }
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition ${
+                        review.liked_by_me
+                          ? "border-pink-500/40 bg-pink-500/10 text-pink-300"
+                          : "border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-white"
+                      }`}
+                    >
+                      <HeartIcon filled={review.liked_by_me} />
+                      <span>{review.like_count}</span>
+                    </button>
+                  </form>
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
     </div>
   );
 }

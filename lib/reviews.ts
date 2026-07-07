@@ -80,11 +80,12 @@ export async function getReviewsForSpot(
   page = 1,
   sort: ReviewSort = "recent",
   currentUserId: string | null = null,
+  pageSize = PAGE_SIZE,
 ) {
   const supabase = await createClient();
   const safePage = Math.max(1, page);
-  const from = (safePage - 1) * PAGE_SIZE;
-  const to = from + PAGE_SIZE - 1;
+  const from = (safePage - 1) * pageSize;
+  const to = from + pageSize - 1;
 
   let query = supabase
     .from("reviews")
@@ -127,8 +128,8 @@ export async function getReviewsForSpot(
     ),
     total: count ?? 0,
     page: safePage,
-    pageSize: PAGE_SIZE,
-    totalPages: Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE)),
+    pageSize,
+    totalPages: Math.max(1, Math.ceil((count ?? 0) / pageSize)),
   };
 }
 

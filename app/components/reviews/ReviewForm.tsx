@@ -5,6 +5,50 @@ import { useRouter } from "next/navigation";
 import { upsertReviewAction } from "@/app/actions";
 import type { Review } from "@/lib/types";
 
+function StarRating({
+  rating,
+  onChange,
+}: {
+  rating: number;
+  onChange: (value: number) => void;
+}) {
+  const [hover, setHover] = useState(0);
+  const active = hover || rating;
+
+  return (
+    <div
+      className="mt-2 flex items-center gap-1"
+      role="radiogroup"
+      aria-label="Rating"
+      onMouseLeave={() => setHover(0)}
+    >
+      {[1, 2, 3, 4, 5].map((value) => (
+        <button
+          key={value}
+          type="button"
+          role="radio"
+          aria-checked={rating === value}
+          aria-label={`${value} star${value === 1 ? "" : "s"}`}
+          onClick={() => onChange(value)}
+          onMouseEnter={() => setHover(value)}
+          className="rounded p-0.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className={`size-8 transition ${
+              value <= active ? "text-amber-400" : "text-zinc-600"
+            }`}
+            fill="currentColor"
+            aria-hidden
+          >
+            <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+          </svg>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 type ReviewFormProps = {
   spotId: string;
   spotSlug: string;
@@ -61,21 +105,9 @@ export default function ReviewForm({
     <>
       <fieldset className="mt-4">
         <legend className="text-sm font-medium text-zinc-300">Rating</legend>
-        <div className="mt-2 flex flex-wrap gap-3">
-          {[1, 2, 3, 4, 5].map((value) => (
-            <label key={value} className="flex items-center gap-2 text-sm text-zinc-300">
-              <input
-                type="radio"
-                name="rating"
-                value={value}
-                checked={rating === value}
-                onChange={() => setRating(value)}
-                required
-              />
-              {value} star{value === 1 ? "" : "s"}
-            </label>
-          ))}
-        </div>
+        <p className="mt-1 text-xs text-zinc-500">Select a rating by clicking the stars.</p>
+        <input type="hidden" name="rating" value={rating || ""} required />
+        <StarRating rating={rating} onChange={setRating} />
       </fieldset>
 
       <label className="mt-4 block text-sm font-medium text-zinc-300" htmlFor="body">
@@ -102,9 +134,9 @@ export default function ReviewForm({
         onSubmit={handleGuestSubmit}
         className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5"
       >
-        <h2 className="text-lg font-semibold text-white">Leave a review</h2>
+        <h2 className="text-lg font-semibold text-white">Leave a comment</h2>
         <p className="mt-1 text-sm text-zinc-400">
-          Write your review now — you&apos;ll sign in to publish it.
+          Write your comment now — you&apos;ll sign in to publish it.
         </p>
         {commonFields}
         <button
@@ -124,7 +156,7 @@ export default function ReviewForm({
       className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5"
     >
       <h2 className="text-lg font-semibold text-white">
-        {existingReview ? "Update your review" : "Leave a review"}
+        {existingReview ? "Update your comment" : "Leave a comment"}
       </h2>
       <input type="hidden" name="spotId" value={spotId} />
       <input type="hidden" name="spotSlug" value={spotSlug} />
@@ -136,7 +168,7 @@ export default function ReviewForm({
         type="submit"
         className="mt-4 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-black hover:bg-emerald-400"
       >
-        {existingReview ? "Update review" : "Publish review"}
+        {existingReview ? "Update comment" : "Publish comment"}
       </button>
     </form>
   );

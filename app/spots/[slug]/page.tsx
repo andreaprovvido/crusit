@@ -34,8 +34,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function SpotDetailPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
   const query = await searchParams;
-  const page = Number(query.page ?? "1");
   const sort = query.sort === "likes" ? "likes" : "recent";
+  const COMMENTS_LIMIT = 10;
 
   let spot = null;
   try {
@@ -61,9 +61,10 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
   try {
     reviewsResult = await getReviewsForSpot(
       spot.id,
-      Number.isNaN(page) ? 1 : page,
+      1,
       sort,
       user?.id ?? null,
+      COMMENTS_LIMIT,
     );
   } catch {
     // Reviews unavailable (e.g. migration not applied yet); render page anyway.
@@ -76,7 +77,6 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
     existingReview = null;
   }
   const siteUrl = getSiteUrl();
-  const sortSuffix = sort === "likes" ? "&sort=likes" : "";
 
   return (
     <div className="relative overflow-hidden">
@@ -148,54 +148,39 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
         </p>
       </section>
 
-      <section aria-label="Reviews" className="mt-12 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div>
-          <h2 className="text-2xl font-semibold text-white">Reviews</h2>
-          {query.error ? (
-            <p className="mt-3 rounded-lg border border-red-900/50 bg-red-950/30 p-3 text-sm text-red-300">
-              {query.error}
-            </p>
+      <section aria-label="Comments" className="mt-12">
+        <h2 className="text-2xl font-semibold text-white">
+          Comments
+          {reviewsResult.total > 0 ? (
+            <span className="ml-2 text-lg font-normal text-zinc-500">
+              ({reviewsResult.total})
+            </span>
           ) : null}
-          <div className="mt-4">
-            <ReviewList
-              reviews={reviewsResult.reviews}
-              spotSlug={spot.slug}
-              sort={sort}
-              page={reviewsResult.page}
-            />
-          </div>
+        </h2>
+        {query.error ? (
+          <p className="mt-3 rounded-lg border border-red-900/50 bg-red-950/30 p-3 text-sm text-red-300">
+            {query.error}
+          </p>
+        ) : null}
 
-          {reviewsResult.totalPages > 1 ? (
-            <nav aria-label="Review pagination" className="mt-6 flex items-center gap-4">
-              {reviewsResult.page > 1 ? (
-                <Link
-                  href={`/spots/${spot.slug}?page=${reviewsResult.page - 1}${sortSuffix}`}
-                  className="text-sm text-emerald-400 hover:text-emerald-300"
-                >
-                  Previous reviews
-                </Link>
-              ) : null}
-              <span className="text-sm text-zinc-400">
-                Page {reviewsResult.page} of {reviewsResult.totalPages}
-              </span>
-              {reviewsResult.page < reviewsResult.totalPages ? (
-                <Link
-                  href={`/spots/${spot.slug}?page=${reviewsResult.page + 1}${sortSuffix}`}
-                  className="text-sm text-emerald-400 hover:text-emerald-300"
-                >
-                  More reviews
-                </Link>
-              ) : null}
-            </nav>
-          ) : null}
+        <div className="mt-4">
+          <ReviewList
+            reviews={reviewsResult.reviews}
+            spotSlug={spot.slug}
+            sort={sort}
+            page={1}
+            total={reviewsResult.total}
+          />
         </div>
 
-        <ReviewForm
-          spotId={spot.id}
-          spotSlug={spot.slug}
-          existingReview={existingReview}
-          isAuthenticated={Boolean(user)}
-        />
+        <div className="mt-6">
+          <ReviewForm
+            spotId={spot.id}
+            spotSlug={spot.slug}
+            existingReview={existingReview}
+            isAuthenticated={Boolean(user)}
+          />
+        </div>
       </section>
       </div>
     </div>
