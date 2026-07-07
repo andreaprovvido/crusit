@@ -13,7 +13,7 @@ import { getSpotBySlug } from "@/lib/spots";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ page?: string; error?: string }>;
+  searchParams: Promise<{ page?: string; error?: string; sort?: string }>;
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -35,6 +35,7 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
   const { slug } = await params;
   const query = await searchParams;
   const page = Number(query.page ?? "1");
+  const sort = query.sort === "likes" ? "likes" : "recent";
 
   let spot = null;
   try {
@@ -50,9 +51,32 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
     data: { user },
   } = await supabase.auth.getUser();
 
-  const reviewsResult = await getReviewsForSpot(spot.id, Number.isNaN(page) ? 1 : page);
-  const existingReview = user ? await getUserReviewForSpot(spot.id, user.id) : null;
+  let reviewsResult = {
+    reviews: [] as Awaited<ReturnType<typeof getReviewsForSpot>>["reviews"],
+    total: 0,
+    page: 1,
+    pageSize: 20,
+    totalPages: 1,
+  };
+  try {
+    reviewsResult = await getReviewsForSpot(
+      spot.id,
+      Number.isNaN(page) ? 1 : page,
+      sort,
+      user?.id ?? null,
+    );
+  } catch {
+    // Reviews unavailable (e.g. migration not applied yet); render page anyway.
+  }
+
+  let existingReview = null;
+  try {
+    existingReview = user ? await getUserReviewForSpot(spot.id, user.id) : null;
+  } catch {
+    existingReview = null;
+  }
   const siteUrl = getSiteUrl();
+  const sortSuffix = sort === "likes" ? "&sort=likes" : "";
 
   return (
     <div className="relative overflow-hidden">
@@ -133,14 +157,19 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
             </p>
           ) : null}
           <div className="mt-4">
-            <ReviewList reviews={reviewsResult.reviews} />
+            <ReviewList
+              reviews={reviewsResult.reviews}
+              spotSlug={spot.slug}
+              sort={sort}
+              page={reviewsResult.page}
+            />
           </div>
 
           {reviewsResult.totalPages > 1 ? (
             <nav aria-label="Review pagination" className="mt-6 flex items-center gap-4">
               {reviewsResult.page > 1 ? (
                 <Link
-                  href={`/spots/${spot.slug}?page=${reviewsResult.page - 1}`}
+                  href={`/spots/${spot.slug}?page=${reviewsResult.page - 1}${sortSuffix}`}
                   className="text-sm text-emerald-400 hover:text-emerald-300"
                 >
                   Previous reviews
@@ -151,7 +180,7 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
               </span>
               {reviewsResult.page < reviewsResult.totalPages ? (
                 <Link
-                  href={`/spots/${spot.slug}?page=${reviewsResult.page + 1}`}
+                  href={`/spots/${spot.slug}?page=${reviewsResult.page + 1}${sortSuffix}`}
                   className="text-sm text-emerald-400 hover:text-emerald-300"
                 >
                   More reviews

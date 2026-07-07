@@ -287,3 +287,51 @@ export async function upsertReviewAction(formData: FormData) {
   revalidatePath("/spots");
   redirect(`/spots/${spotSlug}`);
 }
+
+export async function toggleReviewLikeAction(formData: FormData) {
+  const spotSlug = String(formData.get("spotSlug") ?? "");
+  const reviewId = String(formData.get("reviewId") ?? "");
+  const sort = String(formData.get("sort") ?? "recent");
+  const page = String(formData.get("page") ?? "1");
+
+  const query = new URLSearchParams();
+  if (sort && sort !== "recent") query.set("sort", sort);
+  if (page && page !== "1") query.set("page", page);
+  const suffix = query.toString() ? `?${query.toString()}` : "";
+  const spotUrl = `/spots/${spotSlug}${suffix}`;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(`/login?redirectTo=${encodeURIComponent(spotUrl)}`);
+  }
+
+  if (!spotSlug || !reviewId) {
+    redirect(spotUrl);
+  }
+
+  const { data: existing } = await supabase
+    .from("review_likes")
+    .select("review_id")
+    .eq("review_id", reviewId)
+    .eq("user_id", user!.id)
+    .maybeSingle();
+
+  if (existing) {
+    await supabase
+      .from("review_likes")
+      .delete()
+      .eq("review_id", reviewId)
+      .eq("user_id", user!.id);
+  } else {
+    await supabase
+      .from("review_likes")
+      .insert({ review_id: reviewId, user_id: user!.id });
+  }
+
+  revalidatePath(`/spots/${spotSlug}`);
+  redirect(spotUrl);
+}

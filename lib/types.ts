@@ -28,7 +28,11 @@ export type Review = {
   created_at: string;
   updated_at: string;
   author_label: string;
+  like_count: number;
+  liked_by_me: boolean;
 };
+
+export type ReviewSort = "recent" | "likes";
 
 export type SpotSearchParams = {
   q?: string;

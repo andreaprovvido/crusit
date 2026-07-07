@@ -135,7 +135,7 @@ export default function Home() {
             context, and location details that make discovery actually useful.
           </p>
 
-          <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row">
+          <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap">
             <a
               href="/spots"
               className="rounded-xl bg-emerald-500 px-8 py-4 font-semibold text-black transition hover:bg-emerald-400"
@@ -144,9 +144,15 @@ export default function Home() {
             </a>
             <a
               href="/spots/new"
-              className="rounded-xl border border-zinc-700 px-8 py-4 font-semibold text-zinc-300 transition hover:border-zinc-500 hover:text-white"
+              className="rounded-xl bg-sky-500 px-8 py-4 font-semibold text-white transition hover:bg-sky-400"
             >
               Add a spot
+            </a>
+            <a
+              href="/blog"
+              className="rounded-xl bg-violet-500 px-8 py-4 font-semibold text-white transition hover:bg-violet-400"
+            >
+              Read our blog
             </a>
           </div>
 
@@ -271,7 +277,7 @@ export default function Home() {
                 </a>
                 <a
                   href="/login"
-                  className="rounded-xl border border-zinc-700 px-8 py-4 font-semibold text-zinc-300 transition hover:border-zinc-500 hover:text-white"
+                  className="rounded-xl bg-violet-500 px-8 py-4 font-semibold text-white transition hover:bg-violet-400"
                 >
                   Sign in and contribute
                 </a>
@@ -280,10 +286,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-
-      <footer className="relative z-10 border-t border-zinc-800 py-8 text-center text-sm text-zinc-500">
-        <p>&copy; {new Date().getFullYear()} Crusit. All rights reserved.</p>
-      </footer>
     </div>
   );
 }
