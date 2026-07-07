@@ -16,6 +16,7 @@ type SpotMapProps = {
   spots: Spot[];
   selectedSlug?: string;
   interactive?: boolean;
+  showPopup?: boolean;
   onSelect?: (spot: Spot) => void;
   center?: { latitude: number; longitude: number };
   zoom?: number;
@@ -32,6 +33,7 @@ export default function SpotMap({
   spots,
   selectedSlug,
   interactive = true,
+  showPopup = true,
   onSelect,
   center,
   zoom = 5,
@@ -54,10 +56,10 @@ export default function SpotMap({
   }, [center, spots, zoom, worldView]);
 
   useEffect(() => {
-    if (!selectedSlug) return;
+    if (!showPopup || !selectedSlug) return;
     const spot = spots.find((item) => item.slug === selectedSlug);
     if (spot) setPopupSpot(spot);
-  }, [selectedSlug, spots]);
+  }, [selectedSlug, showPopup, spots]);
 
   useEffect(() => {
     if (!mapRef.current || center || worldView || spots.length < 2) return;
@@ -92,7 +94,7 @@ export default function SpotMap({
 
   function handleMarkerClick(event: { originalEvent: MouseEvent }, spot: Spot) {
     event.originalEvent.stopPropagation();
-    setPopupSpot(spot);
+    if (showPopup) setPopupSpot(spot);
     onSelect?.(spot);
   }
 
@@ -133,7 +135,7 @@ export default function SpotMap({
           );
         })}
 
-        {popupSpot ? (
+        {showPopup && popupSpot ? (
           <Popup
             longitude={popupSpot.longitude}
             latitude={popupSpot.latitude}

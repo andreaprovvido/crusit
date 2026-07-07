@@ -102,6 +102,7 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
         <SpotMapSection
           spots={[spot]}
           selectedSlug={spot.slug}
+          showPopup={false}
           center={{ latitude: spot.latitude, longitude: spot.longitude }}
           zoom={13}
         />
