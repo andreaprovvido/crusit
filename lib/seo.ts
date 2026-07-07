@@ -5,6 +5,11 @@ import { spotTypeLabel } from "@/lib/spotTypes";
 export const SITE_NAME = "Crusit";
 const SITE_URL_FALLBACK = "https://www.crusit.com";
 
+// Raster logo used in structured data (schema.org requires a raster image for
+// Organization/publisher logos — SVG is not accepted). Served by app/icon.png.
+const LOGO_PATH = "/icon.png";
+const LOGO_SIZE = 512;
+
 export const DEFAULT_TITLE = "Crusit — Discover Gay Cruising Spots Worldwide";
 export const DEFAULT_DESCRIPTION =
   "Crusit is the community-powered map for discovering, reviewing, and sharing LGBTQ+ gay cruising spots worldwide, with precise addresses, ratings, and real reviews.";
@@ -299,14 +304,59 @@ export function buildBlogPostMetadata({
   });
 }
 
+/**
+ * Organization JSON-LD carrying the brand logo. Emitted site-wide so every
+ * page exposes an Organization node with a `logo`, which is what schema.org /
+ * Google use for the brand logo. Other nodes reference it via its @id.
+ */
+export function organizationJsonLd(siteUrl: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${siteUrl}/#organization`,
+    name: SITE_NAME,
+    url: siteUrl,
+    logo: {
+      "@type": "ImageObject",
+      "@id": `${siteUrl}/#logo`,
+      url: `${siteUrl}${LOGO_PATH}`,
+      contentUrl: `${siteUrl}${LOGO_PATH}`,
+      width: LOGO_SIZE,
+      height: LOGO_SIZE,
+      caption: SITE_NAME,
+    },
+    image: { "@id": `${siteUrl}/#logo` },
+    description:
+      "A global community map for discovering, sharing, and reviewing LGBTQI+ gay cruising spots.",
+  };
+}
+
+/** Publisher reference including an inline logo (safe for standalone blocks). */
+function publisherOrganization(siteUrl: string) {
+  return {
+    "@type": "Organization",
+    "@id": `${siteUrl}/#organization`,
+    name: SITE_NAME,
+    url: siteUrl,
+    logo: {
+      "@type": "ImageObject",
+      url: `${siteUrl}${LOGO_PATH}`,
+      width: LOGO_SIZE,
+      height: LOGO_SIZE,
+    },
+  };
+}
+
 export function websiteJsonLd(siteUrl: string) {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${siteUrl}/#website`,
     name: SITE_NAME,
     url: siteUrl,
     description:
       "A global community map for discovering, sharing, and reviewing LGBTQI+ cruising locations.",
+    publisher: { "@id": `${siteUrl}/#organization` },
     potentialAction: {
       "@type": "SearchAction",
       target: {
@@ -331,8 +381,15 @@ export function aboutPageJsonLd(siteUrl: string) {
     isPartOf: { "@type": "WebSite", name: SITE_NAME, url: siteUrl },
     about: {
       "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
       name: SITE_NAME,
       url: siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}${LOGO_PATH}`,
+        width: LOGO_SIZE,
+        height: LOGO_SIZE,
+      },
       description:
         "A global community map for gay and LGBTQ+ people to discover cruising spots with maps, reviews, and safety-first guidance.",
     },
@@ -378,7 +435,7 @@ export function blogPostingJsonLd(
     datePublished: post.publishedTime,
     dateModified: post.modifiedTime ?? post.publishedTime,
     author: { "@type": "Organization", name: post.author },
-    publisher: { "@type": "Organization", name: SITE_NAME, url: siteUrl },
+    publisher: publisherOrganization(siteUrl),
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     url,
   };
