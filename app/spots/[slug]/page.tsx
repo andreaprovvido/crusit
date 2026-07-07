@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import RainbowMeshBackground from "@/app/components/RainbowMeshBackground";
 import SpotMapSection from "@/app/components/map/SpotMapSection";
 import ReviewForm from "@/app/components/reviews/ReviewForm";
 import ReviewList from "@/app/components/reviews/ReviewList";
@@ -62,7 +63,9 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
   const siteUrl = getSiteUrl();
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-10">
+    <div className="relative overflow-hidden">
+      <RainbowMeshBackground variant="spots" />
+      <div className="relative z-10 mx-auto max-w-6xl px-6 py-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -151,6 +154,7 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
           isAuthenticated={Boolean(user)}
         />
       </section>
+      </div>
     </div>
   );
 }
