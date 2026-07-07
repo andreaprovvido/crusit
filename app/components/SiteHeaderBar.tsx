@@ -72,7 +72,7 @@ export default function SiteHeaderBar({
           <Link
             href="/spots/new"
             aria-label="Add new spot"
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-semibold text-black transition hover:bg-emerald-400"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-[#00bd7e] px-3 py-2 text-sm font-semibold text-black transition hover:bg-[#00a870]"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -186,7 +186,7 @@ export default function SiteHeaderBar({
               <li>
                 <Link
                   href="/spots/new"
-                  className={`${menuLinkClass} gap-1.5 bg-emerald-500 font-semibold text-black hover:border-emerald-400 hover:bg-emerald-400 hover:text-black`}
+                  className={`${menuLinkClass} gap-1.5 bg-[#00bd7e] font-semibold text-black hover:bg-[#00a870] hover:text-black`}
                   onClick={close}
                 >
                   <svg

@@ -144,13 +144,13 @@ export default function Home() {
             </a>
             <a
               href="/spots/new"
-              className="rounded-xl bg-sky-500 px-8 py-4 font-semibold text-white transition hover:bg-sky-400"
+              className="rounded-xl bg-[#00bd7e] px-8 py-4 font-semibold text-black transition hover:bg-[#00a870]"
             >
               Add a spot
             </a>
             <a
               href="/blog"
-              className="rounded-xl bg-violet-500 px-8 py-4 font-semibold text-white transition hover:bg-violet-400"
+              className="rounded-xl bg-[#00bd7e] px-8 py-4 font-semibold text-black transition hover:bg-[#00a870]"
             >
               Read our blog
             </a>
