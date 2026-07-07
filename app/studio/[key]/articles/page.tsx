@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { listAdminPosts } from "@/lib/admin/data";
 import { adminDeletePostAction } from "@/app/studio/actions";
 import AdminShell from "../AdminShell";
+import AdminError from "../AdminError";
 
 type PageProps = {
   params: Promise<{ key: string }>;
@@ -20,8 +21,23 @@ function formatDate(iso: string | null) {
 export default async function StudioArticlesPage({ params }: PageProps) {
   const { key } = await params;
   const admin = await requireAdmin(key);
-  const posts = await listAdminPosts();
   const base = `/studio/${key}`;
+
+  let posts: Awaited<ReturnType<typeof listAdminPosts>> | null = null;
+  let loadError: string | null = null;
+  try {
+    posts = await listAdminPosts();
+  } catch (err) {
+    loadError = err instanceof Error ? err.message : "Unknown error.";
+  }
+
+  if (!posts) {
+    return (
+      <AdminShell keyParam={key} email={admin.email ?? ""} active="articles" title="Articles">
+        <AdminError message={loadError ?? "Unknown error."} />
+      </AdminShell>
+    );
+  }
 
   return (
     <AdminShell keyParam={key} email={admin.email ?? ""} active="articles" title="Articles">

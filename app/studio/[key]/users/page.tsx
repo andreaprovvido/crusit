@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/admin/auth";
 import { listAdminUsers } from "@/lib/admin/data";
 import AdminShell from "../AdminShell";
+import AdminError from "../AdminError";
 
 type PageProps = {
   params: Promise<{ key: string }>;
@@ -22,9 +23,23 @@ export default async function StudioUsersPage({ params, searchParams }: PageProp
   const admin = await requireAdmin(key);
   const { page } = await searchParams;
   const currentPage = Number(page) || 1;
-
-  const result = await listAdminUsers({ page: currentPage });
   const base = `/studio/${key}`;
+
+  let result: Awaited<ReturnType<typeof listAdminUsers>> | null = null;
+  let loadError: string | null = null;
+  try {
+    result = await listAdminUsers({ page: currentPage });
+  } catch (err) {
+    loadError = err instanceof Error ? err.message : "Unknown error.";
+  }
+
+  if (!result) {
+    return (
+      <AdminShell keyParam={key} email={admin.email ?? ""} active="users" title="Registered users">
+        <AdminError message={loadError ?? "Unknown error."} />
+      </AdminShell>
+    );
+  }
 
   return (
     <AdminShell keyParam={key} email={admin.email ?? ""} active="users" title="Registered users">

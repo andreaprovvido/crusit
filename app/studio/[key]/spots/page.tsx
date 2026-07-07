@@ -7,6 +7,7 @@ import {
   adminSetSpotStatusAction,
 } from "@/app/studio/actions";
 import AdminShell from "../AdminShell";
+import AdminError from "../AdminError";
 
 type PageProps = {
   params: Promise<{ key: string }>;
@@ -19,13 +20,27 @@ export default async function StudioSpotsPage({ params, searchParams }: PageProp
   const { q, status, page } = await searchParams;
 
   const statusFilter = status === "hidden" || status === "published" ? status : undefined;
-  const result = await listAdminSpots({
-    q,
-    status: statusFilter,
-    page: Number(page) || 1,
-  });
-
   const base = `/studio/${key}`;
+
+  let result: Awaited<ReturnType<typeof listAdminSpots>> | null = null;
+  let loadError: string | null = null;
+  try {
+    result = await listAdminSpots({
+      q,
+      status: statusFilter,
+      page: Number(page) || 1,
+    });
+  } catch (err) {
+    loadError = err instanceof Error ? err.message : "Unknown error.";
+  }
+
+  if (!result) {
+    return (
+      <AdminShell keyParam={key} email={admin.email ?? ""} active="spots" title="Spots">
+        <AdminError message={loadError ?? "Unknown error."} />
+      </AdminShell>
+    );
+  }
 
   return (
     <AdminShell keyParam={key} email={admin.email ?? ""} active="spots" title="Spots">

@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { getAdminSpotById } from "@/lib/admin/data";
 import { adminUpdateSpotAction } from "@/app/studio/actions";
 import AdminShell from "../../AdminShell";
+import AdminError from "../../AdminError";
 import AdminSpotForm from "../AdminSpotForm";
 
 type PageProps = {
@@ -16,7 +17,21 @@ export default async function StudioEditSpotPage({ params, searchParams }: PageP
   const admin = await requireAdmin(key);
   const { error } = await searchParams;
 
-  const spot = await getAdminSpotById(id);
+  let spot: Awaited<ReturnType<typeof getAdminSpotById>> = null;
+  let loadError: string | null = null;
+  try {
+    spot = await getAdminSpotById(id);
+  } catch (err) {
+    loadError = err instanceof Error ? err.message : "Unknown error.";
+  }
+
+  if (loadError) {
+    return (
+      <AdminShell keyParam={key} email={admin.email ?? ""} active="spots" title="Edit spot">
+        <AdminError message={loadError} />
+      </AdminShell>
+    );
+  }
   if (!spot) notFound();
 
   return (

@@ -83,7 +83,7 @@ export async function listAdminSpots({
   const to = from + PAGE_SIZE - 1;
 
   let query = supabase
-    .from("spots")
+    .from("spots_admin")
     .select(SPOT_SELECT, { count: "exact" })
     .order("created_at", { ascending: false })
     .range(from, to);
@@ -113,7 +113,7 @@ export async function listAdminSpots({
 export async function getAdminSpotById(id: string): Promise<Spot | null> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
-    .from("spots")
+    .from("spots_admin")
     .select(SPOT_SELECT)
     .eq("id", id)
     .maybeSingle();

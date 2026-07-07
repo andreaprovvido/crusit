@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { getAdminContent } from "@/lib/admin/data";
 import { adminUpdateContentAction } from "@/app/studio/actions";
 import AdminShell from "../AdminShell";
+import AdminError from "../AdminError";
 
 type PageProps = {
   params: Promise<{ key: string }>;
@@ -17,7 +18,21 @@ export default async function StudioAboutPage({ params, searchParams }: PageProp
   const admin = await requireAdmin(key);
   const { error, saved } = await searchParams;
 
-  const content = await getAdminContent("about");
+  let content: Awaited<ReturnType<typeof getAdminContent>> = null;
+  let loadError: string | null = null;
+  try {
+    content = await getAdminContent("about");
+  } catch (err) {
+    loadError = err instanceof Error ? err.message : "Unknown error.";
+  }
+
+  if (loadError) {
+    return (
+      <AdminShell keyParam={key} email={admin.email ?? ""} active="about page" title="About page">
+        <AdminError message={loadError} />
+      </AdminShell>
+    );
+  }
 
   return (
     <AdminShell keyParam={key} email={admin.email ?? ""} active="about page" title="About page">

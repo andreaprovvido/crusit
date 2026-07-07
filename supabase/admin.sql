@@ -94,6 +94,41 @@ create policy "Site content is public"
   using (true);
 
 -- =========================================================================
+-- Admin spots view (all statuses + latitude/longitude for the panel)
+-- =========================================================================
+-- Unlike spots_public, this view is NOT filtered by status and exposes the
+-- coordinates decoded from the PostGIS geography column. It runs as the view
+-- owner (security_invoker = false) and is only readable by the service role.
+drop view if exists public.spots_admin;
+
+create view public.spots_admin
+with (security_invoker = false)
+as
+select
+  id,
+  slug,
+  name,
+  description,
+  street_address,
+  city,
+  province,
+  region,
+  postal_code,
+  country,
+  created_by,
+  created_at,
+  status,
+  spot_type,
+  rating_avg,
+  rating_count,
+  st_y(location::geometry) as latitude,
+  st_x(location::geometry) as longitude
+from public.spots;
+
+revoke all on public.spots_admin from public, anon, authenticated;
+grant select on public.spots_admin to service_role;
+
+-- =========================================================================
 -- Admin spot editor (updates scalar fields + PostGIS location)
 -- =========================================================================
 create or replace function public.admin_update_spot(
