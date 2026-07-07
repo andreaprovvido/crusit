@@ -85,7 +85,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
         </p>
       </div>
 
-      <form method="get" className="mt-8 grid gap-4 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 md:grid-cols-[1fr_auto_auto_auto]">
+      <form method="get" className="mt-8 space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5">
         <label className="block text-sm text-zinc-300">
           Search
           <input
@@ -95,56 +95,63 @@ export default async function SpotsPage({ searchParams }: PageProps) {
             className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
           />
         </label>
-        <label className="block text-sm text-zinc-300">
-          Type
-          <select
-            name="spotType"
-            defaultValue={params.spotType ?? ""}
-            className="mt-2 w-full min-w-40 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
-          >
-            <option value="">All types</option>
-            {SPOT_TYPES.map((type) => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block text-sm text-zinc-300">
-          Country
-          <select
-            name="country"
-            defaultValue={params.country ?? ""}
-            className="mt-2 w-full min-w-44 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
-          >
-            <option value="">All countries</option>
-            {COUNTRIES.map((country) => (
-              <option key={country} value={country}>
-                {country}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block text-sm text-zinc-300">
-          Min rating
-          <select
-            name="minRating"
-            defaultValue={params.minRating ?? ""}
-            className="mt-2 w-full min-w-36 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
-          >
-            <option value="">Any</option>
-            <option value="3">3+ stars</option>
-            <option value="4">4+ stars</option>
-            <option value="5">5 stars</option>
-          </select>
-        </label>
-        <div className="md:col-span-4">
+
+        <div className="-mx-1 flex items-end gap-3 overflow-x-auto px-1 pb-1">
+          <label className="block shrink-0 text-sm text-zinc-300">
+            Type
+            <select
+              name="spotType"
+              defaultValue={params.spotType ?? ""}
+              className="mt-2 w-full min-w-40 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
+            >
+              <option value="">All types</option>
+              {SPOT_TYPES.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block shrink-0 text-sm text-zinc-300">
+            Country
+            <select
+              name="country"
+              defaultValue={params.country ?? ""}
+              className="mt-2 w-full min-w-44 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
+            >
+              <option value="">All countries</option>
+              {COUNTRIES.map((country) => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block shrink-0 text-sm text-zinc-300">
+            Min rating
+            <select
+              name="minRating"
+              defaultValue={params.minRating ?? ""}
+              className="mt-2 w-full min-w-36 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
+            >
+              <option value="">Any</option>
+              <option value="3">3+ stars</option>
+              <option value="4">4+ stars</option>
+              <option value="5">5 stars</option>
+            </select>
+          </label>
           <button
             type="submit"
-            className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-black hover:bg-emerald-400"
+            className="shrink-0 whitespace-nowrap rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-black hover:bg-emerald-400"
           >
             Apply filters
           </button>
+          <Link
+            href="/spots"
+            className="shrink-0 whitespace-nowrap rounded-lg border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 hover:border-zinc-500 hover:text-white"
+          >
+            Reset filters
+          </Link>
         </div>
       </form>
 
