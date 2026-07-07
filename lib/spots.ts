@@ -80,7 +80,7 @@ export async function getSpots(params: SpotSearchParams = {}) {
   }
 
   if (params.country) {
-    query = query.ilike("country", `%${params.country.trim()}%`);
+    query = query.eq("country", params.country.trim());
   }
 
   if (params.minRating) {

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SpotMapSection from "@/app/components/map/SpotMapSection";
 import SpotList from "@/app/components/spots/SpotList";
+import { COUNTRIES } from "@/lib/countries";
 import { getSpots } from "@/lib/spots";
 
 export const metadata: Metadata = {
@@ -17,14 +18,25 @@ export const metadata: Metadata = {
 type PageProps = {
   searchParams: Promise<{
     q?: string;
-    province?: string;
-    region?: string;
-    city?: string;
     country?: string;
     minRating?: string;
     page?: string;
   }>;
 };
+
+function buildFilterQuery(params: {
+  q?: string;
+  country?: string;
+  minRating?: string;
+  page?: string;
+}) {
+  const query = new URLSearchParams();
+  if (params.q) query.set("q", params.q);
+  if (params.country) query.set("country", params.country);
+  if (params.minRating) query.set("minRating", params.minRating);
+  if (params.page) query.set("page", params.page);
+  return query;
+}
 
 export default async function SpotsPage({ searchParams }: PageProps) {
   const params = await searchParams;
@@ -43,9 +55,6 @@ export default async function SpotsPage({ searchParams }: PageProps) {
   try {
     spotsResult = await getSpots({
       q: params.q,
-      province: params.province,
-      region: params.region,
-      city: params.city,
       country: params.country,
       minRating: Number.isNaN(minRating) ? undefined : minRating,
       page: Number.isNaN(page) ? 1 : page,
@@ -71,54 +80,37 @@ export default async function SpotsPage({ searchParams }: PageProps) {
         </p>
       </div>
 
-      <form method="get" className="mt-8 grid gap-4 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 md:grid-cols-5">
+      <form method="get" className="mt-8 grid gap-4 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 md:grid-cols-[1fr_auto_auto]">
         <label className="block text-sm text-zinc-300">
           Search
           <input
             name="q"
             defaultValue={params.q ?? ""}
-            placeholder="Name, street, city, province"
-            className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
-          />
-        </label>
-        <label className="block text-sm text-zinc-300">
-          Region
-          <input
-            name="region"
-            defaultValue={params.region ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
-          />
-        </label>
-        <label className="block text-sm text-zinc-300">
-          Province
-          <input
-            name="province"
-            defaultValue={params.province ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
-          />
-        </label>
-        <label className="block text-sm text-zinc-300">
-          City
-          <input
-            name="city"
-            defaultValue={params.city ?? ""}
+            placeholder="Search by name, address, or location"
             className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
           />
         </label>
         <label className="block text-sm text-zinc-300">
           Country
-          <input
+          <select
             name="country"
             defaultValue={params.country ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
-          />
+            className="mt-2 w-full min-w-44 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
+          >
+            <option value="">All countries</option>
+            {COUNTRIES.map((country) => (
+              <option key={country} value={country}>
+                {country}
+              </option>
+            ))}
+          </select>
         </label>
         <label className="block text-sm text-zinc-300">
           Min rating
           <select
             name="minRating"
             defaultValue={params.minRating ?? ""}
-            className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
+            className="mt-2 w-full min-w-36 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-white"
           >
             <option value="">Any</option>
             <option value="3">3+ stars</option>
@@ -126,7 +118,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
             <option value="5">5 stars</option>
           </select>
         </label>
-        <div className="md:col-span-5">
+        <div className="md:col-span-3">
           <button
             type="submit"
             className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-black hover:bg-emerald-400"
@@ -159,7 +151,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
         <nav aria-label="Pagination" className="mt-8 flex items-center gap-4">
           {currentPage > 1 ? (
             <Link
-              href={`/spots?${new URLSearchParams({ ...params, page: String(currentPage - 1) }).toString()}`}
+              href={`/spots?${buildFilterQuery({ ...params, page: String(currentPage - 1) }).toString()}`}
               className="text-sm text-emerald-400 hover:text-emerald-300"
             >
               Previous page
@@ -170,7 +162,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
           </span>
           {currentPage < totalPages ? (
             <Link
-              href={`/spots?${new URLSearchParams({ ...params, page: String(currentPage + 1) }).toString()}`}
+              href={`/spots?${buildFilterQuery({ ...params, page: String(currentPage + 1) }).toString()}`}
               className="text-sm text-emerald-400 hover:text-emerald-300"
             >
               Next page
