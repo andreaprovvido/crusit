@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import SpotCollectionView from "@/app/components/spots/SpotCollectionView";
 import { COUNTRIES } from "@/lib/countries";
-import { getSpots } from "@/lib/spots";
+import { getSpots, getSpotsForMap } from "@/lib/spots";
 import {
   breadcrumbJsonLd,
   buildCountryMetadata,
@@ -48,10 +48,14 @@ export default async function CountryPage({ params, searchParams }: PageProps) {
   if (!country) notFound();
 
   const pageNumber = Number(page ?? "1");
-  const { spots, total, totalPages, page: currentPage } = await getSpots({
-    country,
-    page: Number.isNaN(pageNumber) ? 1 : pageNumber,
-  });
+  const [{ spots, total, totalPages, page: currentPage }, mapSpots] =
+    await Promise.all([
+      getSpots({
+        country,
+        page: Number.isNaN(pageNumber) ? 1 : pageNumber,
+      }),
+      getSpotsForMap({ country }),
+    ]);
 
   if (total === 0) notFound();
 
@@ -80,6 +84,7 @@ export default async function CountryPage({ params, searchParams }: PageProps) {
         title={`Cruising in ${country}`}
         description={`Discover ${total} community-reviewed gay cruising spot${total === 1 ? "" : "s"} across ${country}. Explore the map, read reviews, and find your next spot.`}
         spots={spots}
+        mapSpots={mapSpots}
         total={total}
         currentPage={currentPage}
         totalPages={totalPages}

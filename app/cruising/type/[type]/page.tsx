@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import SpotCollectionView from "@/app/components/spots/SpotCollectionView";
 import { SPOT_TYPES, spotTypeLabel } from "@/lib/spotTypes";
-import { getSpots } from "@/lib/spots";
+import { getSpots, getSpotsForMap } from "@/lib/spots";
 import {
   breadcrumbJsonLd,
   buildCategoryMetadata,
@@ -42,10 +42,14 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
 
   const label = spotTypeLabel(value);
   const pageNumber = Number(page ?? "1");
-  const { spots, total, totalPages, page: currentPage } = await getSpots({
-    spotType: value,
-    page: Number.isNaN(pageNumber) ? 1 : pageNumber,
-  });
+  const [{ spots, total, totalPages, page: currentPage }, mapSpots] =
+    await Promise.all([
+      getSpots({
+        spotType: value,
+        page: Number.isNaN(pageNumber) ? 1 : pageNumber,
+      }),
+      getSpotsForMap({ spotType: value }),
+    ]);
 
   if (total === 0) notFound();
 
@@ -74,6 +78,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         title={`${label} Cruising Spots`}
         description={`Explore ${total} ${label.toLowerCase()} gay cruising spot${total === 1 ? "" : "s"} worldwide. Browse the map, read reviews, and discover new locations.`}
         spots={spots}
+        mapSpots={mapSpots}
         total={total}
         currentPage={currentPage}
         totalPages={totalPages}

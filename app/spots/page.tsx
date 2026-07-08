@@ -7,6 +7,7 @@ import SpotDiscoveryIndex from "@/app/components/spots/SpotDiscoveryIndex";
 import { COUNTRIES } from "@/lib/countries";
 import { SPOT_TYPES } from "@/lib/spotTypes";
 import {
+  getAllSpotsForMap,
   getCityFacets,
   getCountryFacets,
   getSpotTypeFacets,
@@ -56,15 +57,19 @@ export default async function SpotsPage({ searchParams }: PageProps) {
     totalPages: 1,
   };
   let loadError: string | null = null;
+  let mapSpots: Awaited<ReturnType<typeof getAllSpotsForMap>> = [];
 
   try {
-    spotsResult = await getSpots({
-      q: params.q,
-      country: params.country,
-      spotType: params.spotType,
-      minRating: Number.isNaN(minRating) ? undefined : minRating,
-      page: Number.isNaN(page) ? 1 : page,
-    });
+    [spotsResult, mapSpots] = await Promise.all([
+      getSpots({
+        q: params.q,
+        country: params.country,
+        spotType: params.spotType,
+        minRating: Number.isNaN(minRating) ? undefined : minRating,
+        page: Number.isNaN(page) ? 1 : page,
+      }),
+      getAllSpotsForMap(),
+    ]);
   } catch (error) {
     loadError =
       error instanceof Error
@@ -183,7 +188,7 @@ export default async function SpotsPage({ searchParams }: PageProps) {
 
       <section aria-label="Map view" className="mt-8">
         <h2 className="sr-only">Map</h2>
-        <SpotMapSection spots={spots} worldView />
+        <SpotMapSection spots={mapSpots} worldView />
       </section>
 
       <section aria-label="Spot results" className="mt-10">

@@ -11,6 +11,7 @@ export default function SpotCollectionView({
   title,
   description,
   spots,
+  mapSpots,
   total,
   currentPage,
   totalPages,
@@ -21,12 +22,15 @@ export default function SpotCollectionView({
   title: string;
   description: string;
   spots: Spot[];
+  mapSpots?: Spot[];
   total: number;
   currentPage: number;
   totalPages: number;
   pageHref: (page: number) => string;
   breadcrumb?: Crumb[];
 }) {
+  const spotsForMap = mapSpots ?? spots;
+
   return (
     <div className="relative overflow-hidden">
       <RainbowMeshBackground variant="spots" />
@@ -62,7 +66,7 @@ export default function SpotCollectionView({
 
         <section aria-label="Map view" className="mt-8">
           <h2 className="sr-only">Map</h2>
-          <SpotMapSection spots={spots} worldView />
+          <SpotMapSection spots={spotsForMap} worldView />
         </section>
 
         <section aria-label="Spot results" className="mt-10">

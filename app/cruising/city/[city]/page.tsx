@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import SpotCollectionView from "@/app/components/spots/SpotCollectionView";
-import { getCityFacets, getSpotsByCity, type CityFacet } from "@/lib/spots";
+import {
+  getCityFacets,
+  getSpotsByCity,
+  getSpotsByCityForMap,
+  type CityFacet,
+} from "@/lib/spots";
 import {
   breadcrumbJsonLd,
   buildCityMetadata,
@@ -46,11 +51,18 @@ export default async function CityPage({ params, searchParams }: PageProps) {
   if (!facet) notFound();
 
   const pageNumber = Number(page ?? "1");
-  const { spots, total, totalPages, page: currentPage } = await getSpotsByCity({
-    city: facet.city,
-    country: facet.country,
-    page: Number.isNaN(pageNumber) ? 1 : pageNumber,
-  });
+  const [{ spots, total, totalPages, page: currentPage }, mapSpots] =
+    await Promise.all([
+      getSpotsByCity({
+        city: facet.city,
+        country: facet.country,
+        page: Number.isNaN(pageNumber) ? 1 : pageNumber,
+      }),
+      getSpotsByCityForMap({
+        city: facet.city,
+        country: facet.country,
+      }),
+    ]);
 
   if (total === 0) notFound();
 
@@ -88,6 +100,7 @@ export default async function CityPage({ params, searchParams }: PageProps) {
         title={`Cruising in ${facet.city}`}
         description={`Find the best gay cruising spots in ${where}. Browse ${total} community-reviewed location${total === 1 ? "" : "s"} with maps, ratings, and reviews.`}
         spots={spots}
+        mapSpots={mapSpots}
         total={total}
         currentPage={currentPage}
         totalPages={totalPages}

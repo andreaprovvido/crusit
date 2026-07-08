@@ -47,6 +47,46 @@ function mapSpot(row: SpotRow): Spot {
   };
 }
 
+function applySpotSearchFilters<T extends { ilike: Function; eq: Function; gte: Function; or: Function }>(
+  query: T,
+  params: Omit<SpotSearchParams, "page">,
+): T {
+  let nextQuery = query;
+
+  if (params.q) {
+    const term = `%${params.q.trim()}%`;
+    nextQuery = nextQuery.or(
+      `name.ilike.${term},description.ilike.${term},street_address.ilike.${term},city.ilike.${term},province.ilike.${term},region.ilike.${term},country.ilike.${term}`,
+    ) as T;
+  }
+
+  if (params.province) {
+    nextQuery = nextQuery.ilike("province", `%${params.province.trim()}%`) as T;
+  }
+
+  if (params.region) {
+    nextQuery = nextQuery.ilike("region", `%${params.region.trim()}%`) as T;
+  }
+
+  if (params.city) {
+    nextQuery = nextQuery.ilike("city", `%${params.city.trim()}%`) as T;
+  }
+
+  if (params.country) {
+    nextQuery = nextQuery.eq("country", params.country.trim()) as T;
+  }
+
+  if (params.spotType) {
+    nextQuery = nextQuery.eq("spot_type", params.spotType.trim()) as T;
+  }
+
+  if (params.minRating) {
+    nextQuery = nextQuery.gte("rating_avg", params.minRating) as T;
+  }
+
+  return nextQuery;
+}
+
 export async function getSpots(params: SpotSearchParams = {}) {
   const supabase = await createClient();
   const page = Math.max(1, params.page ?? 1);
@@ -62,36 +102,7 @@ export async function getSpots(params: SpotSearchParams = {}) {
     .order("created_at", { ascending: false })
     .range(from, to);
 
-  if (params.q) {
-    const term = `%${params.q.trim()}%`;
-    query = query.or(
-      `name.ilike.${term},description.ilike.${term},street_address.ilike.${term},city.ilike.${term},province.ilike.${term},region.ilike.${term},country.ilike.${term}`,
-    );
-  }
-
-  if (params.province) {
-    query = query.ilike("province", `%${params.province.trim()}%`);
-  }
-
-  if (params.region) {
-    query = query.ilike("region", `%${params.region.trim()}%`);
-  }
-
-  if (params.city) {
-    query = query.ilike("city", `%${params.city.trim()}%`);
-  }
-
-  if (params.country) {
-    query = query.eq("country", params.country.trim());
-  }
-
-  if (params.spotType) {
-    query = query.eq("spot_type", params.spotType.trim());
-  }
-
-  if (params.minRating) {
-    query = query.gte("rating_avg", params.minRating);
-  }
+  query = applySpotSearchFilters(query, params);
 
   const { data, error, count } = await query;
 
@@ -106,6 +117,41 @@ export async function getSpots(params: SpotSearchParams = {}) {
     pageSize: PAGE_SIZE,
     totalPages: Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE)),
   };
+}
+
+export async function getAllSpotsForMap() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("spots_public")
+    .select(
+      "id, slug, name, description, street_address, city, province, region, postal_code, country, created_by, created_at, status, spot_type, rating_avg, rating_count, latitude, longitude",
+    )
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data as SpotRow[] | null)?.map(mapSpot) ?? [];
+}
+
+export async function getSpotsForMap(params: Omit<SpotSearchParams, "page"> = {}) {
+  const supabase = await createClient();
+  let query = supabase
+    .from("spots_public")
+    .select(
+      "id, slug, name, description, street_address, city, province, region, postal_code, country, created_by, created_at, status, spot_type, rating_avg, rating_count, latitude, longitude",
+    )
+    .order("created_at", { ascending: false });
+
+  query = applySpotSearchFilters(query, params);
+
+  const { data, error } = await query;
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data as SpotRow[] | null)?.map(mapSpot) ?? [];
 }
 
 const SPOT_SELECT =
@@ -222,6 +268,34 @@ export async function getSpotsByCity({
     pageSize: PAGE_SIZE,
     totalPages: Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE)),
   };
+}
+
+export async function getSpotsByCityForMap({
+  city,
+  country,
+}: {
+  city: string;
+  country?: string;
+}) {
+  const supabase = await createClient();
+
+  let query = supabase
+    .from("spots_public")
+    .select(SPOT_SELECT)
+    .eq("city", city)
+    .order("rating_avg", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (country) {
+    query = query.eq("country", country);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data as SpotRow[] | null)?.map(mapSpot) ?? [];
 }
 
 export async function getSpotBySlug(slug: string) {
