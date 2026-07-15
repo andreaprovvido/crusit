@@ -1,8 +1,9 @@
 "use client";
 
 import { FormEvent, useState, useTransition } from "react";
-import { checkEmailAction, resendConfirmationAction, signInAction, signUpAction } from "@/app/actions";
-import type { LoginFlowStep } from "@/lib/auth";
+import { checkEmailAction, completeSignUpProfileAction, resendConfirmationAction, signInAction } from "@/app/actions";
+import { buildAuthCallbackUrl, type LoginFlowStep } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/client";
 import { USERNAME_RULE } from "@/lib/username";
 
 const inputClass =
@@ -66,6 +67,7 @@ export default function LoginFlow({
   const [clientNotice, setClientNotice] = useState<string | null>(null);
   const [isChecking, startCheckTransition] = useTransition();
   const [isResending, startResendTransition] = useTransition();
+  const [isSigningUp, startSignUpTransition] = useTransition();
 
   const copy = STEP_COPY[step];
   const displayError = error ?? clientError;
@@ -94,6 +96,47 @@ export default function LoginFlow({
     setClientError(null);
     setClientNotice(null);
     setStep("email");
+  }
+
+  function handleSignUpSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setClientError(null);
+    setClientNotice(null);
+
+    const formData = new FormData(event.currentTarget);
+    const username = String(formData.get("username") ?? "");
+    const password = String(formData.get("password") ?? "");
+
+    startSignUpTransition(async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: buildAuthCallbackUrl(redirectTo),
+        },
+      });
+
+      if (error) {
+        setClientError(error.message);
+        return;
+      }
+
+      const userId = data.user?.id;
+      if (!userId) {
+        setClientError("Something went wrong. Please try again.");
+        return;
+      }
+
+      const profileResult = await completeSignUpProfileAction(userId, username);
+      if (profileResult.error) {
+        setClientError(profileResult.error);
+        return;
+      }
+
+      setStep("signin");
+      setClientNotice("Check your email to confirm your account, then sign in.");
+    });
   }
 
   function handleResendConfirmation() {
@@ -206,9 +249,7 @@ export default function LoginFlow({
         ) : null}
 
         {step === "signup" ? (
-          <form action={signUpAction} className="mt-6 space-y-4">
-            <input type="hidden" name="redirectTo" value={redirectTo} />
-            <input type="hidden" name="email" value={email} />
+          <form onSubmit={handleSignUpSubmit} className="mt-6 space-y-4">
             <div className="rounded-lg border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-300">
               <span className="text-zinc-500">Email</span>
               <p className="font-medium text-white">{email}</p>
@@ -244,9 +285,10 @@ export default function LoginFlow({
             </label>
             <button
               type="submit"
-              className="w-full rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-black hover:bg-emerald-400"
+              disabled={isSigningUp}
+              className="w-full rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-black hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Create account
+              {isSigningUp ? "Creating account…" : "Create account"}
             </button>
             <button
               type="button"

@@ -65,9 +65,13 @@ export async function resendConfirmationAction(email: string, redirectTo = "/spo
   };
 }
 
-function isEmailNotConfirmedError(message: string) {
+function needsEmailConfirmation(message: string) {
   const lower = message.toLowerCase();
-  return lower.includes("email not confirmed") || lower.includes("not verified");
+  return (
+    lower.includes("email not confirmed") ||
+    lower.includes("not verified") ||
+    lower.includes("pkce code verifier")
+  );
 }
 
 export async function signInAction(formData: FormData) {
@@ -89,99 +93,44 @@ export async function signInAction(formData: FormData) {
 
   if (error) {
     loginFlowRedirect({
-      error: isEmailNotConfirmedError(error.message)
+      error: needsEmailConfirmation(error.message)
         ? "Your email is not verified yet. Check your inbox or resend the confirmation email below."
         : error.message,
       redirectTo,
       email,
       step: "signin",
-      ...(isEmailNotConfirmedError(error.message) ? { resend: true } : {}),
+      ...(needsEmailConfirmation(error.message) ? { resend: true } : {}),
     });
   }
 
   redirect(redirectTo);
 }
 
-export async function signUpAction(formData: FormData) {
-  const email = normalizeAuthEmail(String(formData.get("email") ?? ""));
-  const password = String(formData.get("password") ?? "");
-  const username = normalizeUsername(String(formData.get("username") ?? ""));
-  const redirectTo = String(formData.get("redirectTo") ?? "/spots");
-
-  if (!isValidAuthEmail(email)) {
-    loginFlowRedirect({
-      error: "Enter a valid email address.",
-      redirectTo,
-      step: "email",
-    });
-  }
-
-  if (!isValidUsername(username)) {
-    loginFlowRedirect({
-      error: `Invalid username. ${USERNAME_RULE}`,
-      redirectTo,
-      email,
-      step: "signup",
-    });
+export async function completeSignUpProfileAction(userId: string, username: string) {
+  const normalized = normalizeUsername(username);
+  if (!isValidUsername(normalized)) {
+    return { error: `Invalid username. ${USERNAME_RULE}` };
   }
 
   const admin = createAdminClient();
-
   const { data: taken } = await admin
     .from("profiles")
     .select("id")
-    .ilike("username", username)
+    .ilike("username", normalized)
     .maybeSingle();
+
   if (taken) {
-    loginFlowRedirect({
-      error: "That username is already taken.",
-      redirectTo,
-      email,
-      step: "signup",
-    });
+    await admin.auth.admin.deleteUser(userId).catch(() => {});
+    return { error: "That username is already taken." };
   }
 
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: buildAuthCallbackUrl(redirectTo),
-    },
-  });
-
+  const { error } = await admin.from("profiles").insert({ id: userId, username: normalized });
   if (error) {
-    loginFlowRedirect({
-      error: error.message,
-      redirectTo,
-      email,
-      step: "signup",
-    });
+    await admin.auth.admin.deleteUser(userId).catch(() => {});
+    return { error: "That username is already taken." };
   }
 
-  const userId = data.user?.id;
-  if (userId) {
-    const { error: profileError } = await admin
-      .from("profiles")
-      .insert({ id: userId, username });
-
-    if (profileError) {
-      await admin.auth.admin.deleteUser(userId).catch(() => {});
-      loginFlowRedirect({
-        error: "That username is already taken.",
-        redirectTo,
-        email,
-        step: "signup",
-      });
-    }
-  }
-
-  loginFlowRedirect({
-    notice: "Check your email to confirm your account, then sign in.",
-    redirectTo,
-    email,
-    step: "signin",
-  });
+  return { success: true };
 }
 
 function parseRating(value: FormDataEntryValue | null) {
