@@ -15,12 +15,14 @@ function loginFlowRedirect(params: {
   notice?: string;
   email?: string;
   step?: LoginFlowStep;
+  resend?: boolean;
 }) {
   const search = new URLSearchParams({ redirectTo: params.redirectTo });
   if (params.error) search.set("error", params.error);
   if (params.notice) search.set("notice", params.notice);
   if (params.email) search.set("email", params.email);
   if (params.step) search.set("step", params.step);
+  if (params.resend) search.set("resend", "1");
   redirect(`/login?${search.toString()}`);
 }
 
@@ -36,6 +38,36 @@ export async function checkEmailAction(email: string) {
   } catch {
     return { registered: false, error: "Something went wrong. Please try again." };
   }
+}
+
+export async function resendConfirmationAction(email: string, redirectTo = "/spots") {
+  const normalized = normalizeAuthEmail(email);
+  if (!isValidAuthEmail(normalized)) {
+    return { error: "Enter a valid email address." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: normalized,
+    options: {
+      emailRedirectTo: buildAuthCallbackUrl(redirectTo),
+    },
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return {
+    success: true,
+    message: "Confirmation email sent. Check your inbox and click the link to verify your account.",
+  };
+}
+
+function isEmailNotConfirmedError(message: string) {
+  const lower = message.toLowerCase();
+  return lower.includes("email not confirmed") || lower.includes("not verified");
 }
 
 export async function signInAction(formData: FormData) {
@@ -57,10 +89,13 @@ export async function signInAction(formData: FormData) {
 
   if (error) {
     loginFlowRedirect({
-      error: error.message,
+      error: isEmailNotConfirmedError(error.message)
+        ? "Your email is not verified yet. Check your inbox or resend the confirmation email below."
+        : error.message,
       redirectTo,
       email,
       step: "signin",
+      ...(isEmailNotConfirmedError(error.message) ? { resend: true } : {}),
     });
   }
 

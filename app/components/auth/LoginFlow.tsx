@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState, useTransition } from "react";
-import { checkEmailAction, signInAction, signUpAction } from "@/app/actions";
+import { checkEmailAction, resendConfirmationAction, signInAction, signUpAction } from "@/app/actions";
 import type { LoginFlowStep } from "@/lib/auth";
 import { USERNAME_RULE } from "@/lib/username";
 
@@ -15,6 +15,7 @@ type LoginFlowProps = {
   error?: string;
   notice?: string;
   confirmed?: boolean;
+  showResend?: boolean;
 };
 
 const STEP_COPY: Record<
@@ -55,16 +56,20 @@ export default function LoginFlow({
   error,
   notice,
   confirmed,
+  showResend,
 }: LoginFlowProps) {
   const [step, setStep] = useState<LoginFlowStep>(() =>
     resolveInitialStep(initialStep, initialEmail),
   );
   const [email, setEmail] = useState(initialEmail);
   const [clientError, setClientError] = useState<string | null>(null);
+  const [clientNotice, setClientNotice] = useState<string | null>(null);
   const [isChecking, startCheckTransition] = useTransition();
+  const [isResending, startResendTransition] = useTransition();
 
   const copy = STEP_COPY[step];
   const displayError = error ?? clientError;
+  const displayNotice = notice ?? clientNotice;
 
   function handleEmailSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -87,7 +92,22 @@ export default function LoginFlow({
 
   function handleBack() {
     setClientError(null);
+    setClientNotice(null);
     setStep("email");
+  }
+
+  function handleResendConfirmation() {
+    setClientError(null);
+    setClientNotice(null);
+
+    startResendTransition(async () => {
+      const result = await resendConfirmationAction(email, redirectTo);
+      if (result.error) {
+        setClientError(result.error);
+        return;
+      }
+      setClientNotice(result.message ?? "Confirmation email sent.");
+    });
   }
 
   return (
@@ -98,9 +118,9 @@ export default function LoginFlow({
         </p>
       ) : null}
 
-      {notice ? (
+      {displayNotice ? (
         <p className="mb-6 rounded-xl border border-sky-900/50 bg-sky-950/30 p-4 text-sm text-sky-300">
-          {notice}
+          {displayNotice}
         </p>
       ) : null}
 
@@ -165,6 +185,16 @@ export default function LoginFlow({
             >
               Sign in
             </button>
+            {showResend ? (
+              <button
+                type="button"
+                onClick={handleResendConfirmation}
+                disabled={isResending}
+                className="w-full rounded-lg border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-200 hover:border-zinc-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isResending ? "Sending…" : "Resend confirmation email"}
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={handleBack}
