@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Confirm your Crusit account</title>
+</head>
+<body style="margin:0;padding:0;background-color:#09090b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#09090b;">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:520px;">
+          <!-- Logo -->
+          <tr>
+            <td align="center" style="padding-bottom:28px;">
+              <img
+                src="https://www.crusit.com/icon.png"
+                width="64"
+                height="64"
+                alt="Crusit"
+                style="display:block;border:0;border-radius:16px;"
+              />
+            </td>
+          </tr>
+
+          <!-- Card -->
+          <tr>
+            <td style="background-color:#18181b;border:1px solid #27272a;border-radius:20px;padding:36px 32px;">
+              <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#6ee7b7;text-align:center;">
+                Welcome to Crusit
+              </p>
+              <h1 style="margin:0 0 16px;font-size:28px;line-height:1.25;font-weight:700;color:#ffffff;text-align:center;">
+                Confirm your email
+              </h1>
+              <p style="margin:0 0 28px;font-size:16px;line-height:1.6;color:#a1a1aa;text-align:center;">
+                Thanks for signing up. Tap the button below to verify
+                <span style="color:#e4e4e7;">{{ .Email }}</span>
+                and start discovering cruising spots, ratings, and community reviews.
+              </p>
+
+              <!-- CTA -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td align="center" style="padding-bottom:24px;">
+                    <a
+                      href="{{ .ConfirmationURL }}"
+                      style="display:inline-block;background-color:#10b981;color:#052e1f;font-size:16px;font-weight:600;text-decoration:none;padding:14px 28px;border-radius:12px;"
+                    >
+                      Confirm my account
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 12px;font-size:13px;line-height:1.6;color:#71717a;text-align:center;">
+                Button not working? Copy and paste this link into your browser:
+              </p>
+              <p style="margin:0;font-size:12px;line-height:1.6;color:#34d399;word-break:break-all;text-align:center;">
+                <a href="{{ .ConfirmationURL }}" style="color:#34d399;text-decoration:underline;">{{ .ConfirmationURL }}</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:28px 8px 0;text-align:center;">
+              <p style="margin:0 0 8px;font-size:13px;line-height:1.6;color:#52525b;">
+                If you didn&rsquo;t create a Crusit account, you can safely ignore this email.
+              </p>
+              <p style="margin:0;font-size:13px;line-height:1.6;color:#52525b;">
+                <a href="https://www.crusit.com" style="color:#71717a;text-decoration:none;">www.crusit.com</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Rainbow accent -->
+          <tr>
+            <td style="padding-top:24px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-radius:999px;overflow:hidden;">
+                <tr>
+                  <td height="4" style="background-color:#ef4444;font-size:0;line-height:0;">&nbsp;</td>
+                  <td height="4" style="background-color:#f59e0b;font-size:0;line-height:0;">&nbsp;</td>
+                  <td height="4" style="background-color:#facc15;font-size:0;line-height:0;">&nbsp;</td>
+                  <td height="4" style="background-color:#22c55e;font-size:0;line-height:0;">&nbsp;</td>
+                  <td height="4" style="background-color:#3b82f6;font-size:0;line-height:0;">&nbsp;</td>
+                  <td height="4" style="background-color:#a855f7;font-size:0;line-height:0;">&nbsp;</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

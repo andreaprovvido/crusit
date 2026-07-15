@@ -12,7 +12,7 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 type PageProps = {
-  searchParams: Promise<{ error?: string; redirectTo?: string }>;
+  searchParams: Promise<{ error?: string; notice?: string; confirmed?: string; redirectTo?: string }>;
 };
 
 export default async function LoginPage({ searchParams }: PageProps) {
@@ -25,6 +25,18 @@ export default async function LoginPage({ searchParams }: PageProps) {
       <p className="mt-3 text-sm text-zinc-400">
         Create spots, leave ratings, and write reviews.
       </p>
+
+      {query.confirmed ? (
+        <p className="mt-6 rounded-xl border border-emerald-900/50 bg-emerald-950/30 p-4 text-sm text-emerald-300">
+          Your email is confirmed. Sign in to continue.
+        </p>
+      ) : null}
+
+      {query.notice ? (
+        <p className="mt-6 rounded-xl border border-sky-900/50 bg-sky-950/30 p-4 text-sm text-sky-300">
+          {query.notice}
+        </p>
+      ) : null}
 
       {query.error ? (
         <p className="mt-6 rounded-xl border border-red-900/50 bg-red-950/30 p-4 text-sm text-red-300">

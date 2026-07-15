@@ -6,6 +6,7 @@ import { buildSpotSlug } from "@/lib/slug";
 import { DEFAULT_SPOT_TYPE, isSpotType } from "@/lib/spotTypes";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { buildAuthCallbackUrl } from "@/lib/auth";
 import { isValidUsername, normalizeUsername, USERNAME_RULE } from "@/lib/username";
 
 function loginError(message: string, redirectTo: string) {
@@ -87,7 +88,13 @@ export async function signUpAction(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: buildAuthCallbackUrl(redirectTo),
+    },
+  });
 
   if (error) {
     loginError(error.message, redirectTo);
@@ -106,7 +113,9 @@ export async function signUpAction(formData: FormData) {
     }
   }
 
-  redirect(redirectTo);
+  redirect(
+    `/login?notice=${encodeURIComponent("Check your email to confirm your account, then sign in.")}&redirectTo=${encodeURIComponent(redirectTo)}`,
+  );
 }
 
 export async function updateUsernameAction(formData: FormData) {
