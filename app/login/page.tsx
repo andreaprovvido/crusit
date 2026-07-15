@@ -16,11 +16,9 @@ type PageProps = {
   searchParams: Promise<{
     error?: string;
     notice?: string;
-    confirmed?: string;
     redirectTo?: string;
     email?: string;
     step?: string;
-    resend?: string;
   }>;
 };
 
@@ -48,8 +46,6 @@ export default async function LoginPage({ searchParams }: PageProps) {
         initialStep={parseStep(query.step)}
         error={query.error}
         notice={query.notice}
-        confirmed={Boolean(query.confirmed)}
-        showResend={query.resend === "1"}
       />
 
       <p className="mt-6 text-center text-sm text-zinc-500">

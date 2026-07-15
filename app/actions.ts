@@ -6,7 +6,7 @@ import { buildSpotSlug } from "@/lib/slug";
 import { DEFAULT_SPOT_TYPE, isSpotType } from "@/lib/spotTypes";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { buildAuthCallbackUrl, isEmailRegistered, isValidAuthEmail, type LoginFlowStep, normalizeAuthEmail } from "@/lib/auth";
+import { confirmAuthUserEmail, isEmailRegistered, isValidAuthEmail, type LoginFlowStep, normalizeAuthEmail } from "@/lib/auth";
 import { isValidUsername, normalizeUsername, USERNAME_RULE } from "@/lib/username";
 
 function loginFlowRedirect(params: {
@@ -15,14 +15,12 @@ function loginFlowRedirect(params: {
   notice?: string;
   email?: string;
   step?: LoginFlowStep;
-  resend?: boolean;
 }) {
   const search = new URLSearchParams({ redirectTo: params.redirectTo });
   if (params.error) search.set("error", params.error);
   if (params.notice) search.set("notice", params.notice);
   if (params.email) search.set("email", params.email);
   if (params.step) search.set("step", params.step);
-  if (params.resend) search.set("resend", "1");
   redirect(`/login?${search.toString()}`);
 }
 
@@ -40,40 +38,6 @@ export async function checkEmailAction(email: string) {
   }
 }
 
-export async function resendConfirmationAction(email: string, redirectTo = "/spots") {
-  const normalized = normalizeAuthEmail(email);
-  if (!isValidAuthEmail(normalized)) {
-    return { error: "Enter a valid email address." };
-  }
-
-  const supabase = await createClient();
-  const { error } = await supabase.auth.resend({
-    type: "signup",
-    email: normalized,
-    options: {
-      emailRedirectTo: buildAuthCallbackUrl(redirectTo),
-    },
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  return {
-    success: true,
-    message: "Confirmation email sent. Check your inbox and click the link to verify your account.",
-  };
-}
-
-function needsEmailConfirmation(message: string) {
-  const lower = message.toLowerCase();
-  return (
-    lower.includes("email not confirmed") ||
-    lower.includes("not verified") ||
-    lower.includes("pkce code verifier")
-  );
-}
-
 export async function signInAction(formData: FormData) {
   const email = normalizeAuthEmail(String(formData.get("email") ?? ""));
   const password = String(formData.get("password") ?? "");
@@ -89,17 +53,23 @@ export async function signInAction(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  let { error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error?.message.toLowerCase().includes("email not confirmed")) {
+    try {
+      await confirmAuthUserEmail(email);
+      ({ error } = await supabase.auth.signInWithPassword({ email, password }));
+    } catch {
+      // Fall through to the original sign-in error.
+    }
+  }
 
   if (error) {
     loginFlowRedirect({
-      error: needsEmailConfirmation(error.message)
-        ? "Your email is not verified yet. Check your inbox or resend the confirmation email below."
-        : error.message,
+      error: error.message,
       redirectTo,
       email,
       step: "signin",
-      ...(needsEmailConfirmation(error.message) ? { resend: true } : {}),
     });
   }
 

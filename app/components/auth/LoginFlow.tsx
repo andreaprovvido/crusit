@@ -1,8 +1,8 @@
 "use client";
 
 import { FormEvent, useState, useTransition } from "react";
-import { checkEmailAction, completeSignUpProfileAction, resendConfirmationAction, signInAction } from "@/app/actions";
-import { buildAuthCallbackUrl, type LoginFlowStep } from "@/lib/auth";
+import { checkEmailAction, completeSignUpProfileAction, signInAction } from "@/app/actions";
+import type { LoginFlowStep } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/client";
 import { USERNAME_RULE } from "@/lib/username";
 
@@ -15,8 +15,6 @@ type LoginFlowProps = {
   initialStep?: LoginFlowStep;
   error?: string;
   notice?: string;
-  confirmed?: boolean;
-  showResend?: boolean;
 };
 
 const STEP_COPY: Record<
@@ -56,8 +54,6 @@ export default function LoginFlow({
   initialStep,
   error,
   notice,
-  confirmed,
-  showResend,
 }: LoginFlowProps) {
   const [step, setStep] = useState<LoginFlowStep>(() =>
     resolveInitialStep(initialStep, initialEmail),
@@ -66,7 +62,6 @@ export default function LoginFlow({
   const [clientError, setClientError] = useState<string | null>(null);
   const [clientNotice, setClientNotice] = useState<string | null>(null);
   const [isChecking, startCheckTransition] = useTransition();
-  const [isResending, startResendTransition] = useTransition();
   const [isSigningUp, startSignUpTransition] = useTransition();
 
   const copy = STEP_COPY[step];
@@ -109,16 +104,10 @@ export default function LoginFlow({
 
     startSignUpTransition(async () => {
       const supabase = createClient();
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: buildAuthCallbackUrl(redirectTo),
-        },
-      });
+      const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
 
-      if (error) {
-        setClientError(error.message);
+      if (signUpError) {
+        setClientError(signUpError.message);
         return;
       }
 
@@ -134,33 +123,21 @@ export default function LoginFlow({
         return;
       }
 
-      setStep("signin");
-      setClientNotice("Check your email to confirm your account, then sign in.");
-    });
-  }
-
-  function handleResendConfirmation() {
-    setClientError(null);
-    setClientNotice(null);
-
-    startResendTransition(async () => {
-      const result = await resendConfirmationAction(email, redirectTo);
-      if (result.error) {
-        setClientError(result.error);
-        return;
+      if (!data.session) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInError) {
+          setStep("signin");
+          setClientNotice("Account created. Sign in with your new password.");
+          return;
+        }
       }
-      setClientNotice(result.message ?? "Confirmation email sent.");
+
+      window.location.assign(redirectTo);
     });
   }
 
   return (
     <div className="mt-8">
-      {confirmed ? (
-        <p className="mb-6 rounded-xl border border-emerald-900/50 bg-emerald-950/30 p-4 text-sm text-emerald-300">
-          Your email is confirmed. Enter it below and sign in with your password.
-        </p>
-      ) : null}
-
       {displayNotice ? (
         <p className="mb-6 rounded-xl border border-sky-900/50 bg-sky-950/30 p-4 text-sm text-sky-300">
           {displayNotice}
@@ -228,16 +205,6 @@ export default function LoginFlow({
             >
               Sign in
             </button>
-            {showResend ? (
-              <button
-                type="button"
-                onClick={handleResendConfirmation}
-                disabled={isResending}
-                className="w-full rounded-lg border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-200 hover:border-zinc-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isResending ? "Sending…" : "Resend confirmation email"}
-              </button>
-            ) : null}
             <button
               type="button"
               onClick={handleBack}
