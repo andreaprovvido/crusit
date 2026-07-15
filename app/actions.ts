@@ -6,85 +6,104 @@ import { buildSpotSlug } from "@/lib/slug";
 import { DEFAULT_SPOT_TYPE, isSpotType } from "@/lib/spotTypes";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { buildAuthCallbackUrl } from "@/lib/auth";
+import { buildAuthCallbackUrl, isEmailRegistered, isValidAuthEmail, type LoginFlowStep, normalizeAuthEmail } from "@/lib/auth";
 import { isValidUsername, normalizeUsername, USERNAME_RULE } from "@/lib/username";
 
-function loginError(message: string, redirectTo: string) {
-  redirect(
-    `/login?error=${encodeURIComponent(message)}&redirectTo=${encodeURIComponent(redirectTo)}`,
-  );
+function loginFlowRedirect(params: {
+  redirectTo: string;
+  error?: string;
+  notice?: string;
+  email?: string;
+  step?: LoginFlowStep;
+}) {
+  const search = new URLSearchParams({ redirectTo: params.redirectTo });
+  if (params.error) search.set("error", params.error);
+  if (params.notice) search.set("notice", params.notice);
+  if (params.email) search.set("email", params.email);
+  if (params.step) search.set("step", params.step);
+  redirect(`/login?${search.toString()}`);
 }
 
-function parseRating(value: FormDataEntryValue | null) {
-  const rating = Number(value);
-  if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
-    return null;
+export async function checkEmailAction(email: string) {
+  const normalized = normalizeAuthEmail(email);
+  if (!isValidAuthEmail(normalized)) {
+    return { registered: false, error: "Enter a valid email address." };
   }
-  return rating;
+
+  try {
+    const registered = await isEmailRegistered(normalized);
+    return { registered, email: normalized };
+  } catch {
+    return { registered: false, error: "Something went wrong. Please try again." };
+  }
 }
 
 export async function signInAction(formData: FormData) {
-  const identifier = String(formData.get("identifier") ?? "").trim();
+  const email = normalizeAuthEmail(String(formData.get("email") ?? ""));
   const password = String(formData.get("password") ?? "");
   const redirectTo = String(formData.get("redirectTo") ?? "/spots");
 
-  if (!identifier || !password) {
-    loginError("Enter your email/username and password.", redirectTo);
-  }
-
-  // Resolve the email when the user signs in with a username.
-  let email = identifier;
-  if (!identifier.includes("@")) {
-    const admin = createAdminClient();
-    const { data: profile } = await admin
-      .from("profiles")
-      .select("id")
-      .ilike("username", identifier)
-      .maybeSingle();
-
-    if (!profile) {
-      loginError("Invalid credentials.", redirectTo);
-    }
-
-    const { data: userRes, error: lookupError } = await admin.auth.admin.getUserById(
-      profile!.id,
-    );
-    if (lookupError || !userRes?.user?.email) {
-      loginError("Invalid credentials.", redirectTo);
-    }
-    email = userRes!.user!.email!;
+  if (!email || !password) {
+    loginFlowRedirect({
+      error: "Enter your email and password.",
+      redirectTo,
+      email,
+      step: "signin",
+    });
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    loginError(error.message, redirectTo);
+    loginFlowRedirect({
+      error: error.message,
+      redirectTo,
+      email,
+      step: "signin",
+    });
   }
 
   redirect(redirectTo);
 }
 
 export async function signUpAction(formData: FormData) {
-  const email = String(formData.get("email") ?? "").trim();
+  const email = normalizeAuthEmail(String(formData.get("email") ?? ""));
   const password = String(formData.get("password") ?? "");
   const username = normalizeUsername(String(formData.get("username") ?? ""));
   const redirectTo = String(formData.get("redirectTo") ?? "/spots");
 
+  if (!isValidAuthEmail(email)) {
+    loginFlowRedirect({
+      error: "Enter a valid email address.",
+      redirectTo,
+      step: "email",
+    });
+  }
+
   if (!isValidUsername(username)) {
-    loginError(`Invalid username. ${USERNAME_RULE}`, redirectTo);
+    loginFlowRedirect({
+      error: `Invalid username. ${USERNAME_RULE}`,
+      redirectTo,
+      email,
+      step: "signup",
+    });
   }
 
   const admin = createAdminClient();
 
-  // Pre-check availability (the unique index is the real guard against races).
   const { data: taken } = await admin
     .from("profiles")
     .select("id")
     .ilike("username", username)
     .maybeSingle();
   if (taken) {
-    loginError("That username is already taken.", redirectTo);
+    loginFlowRedirect({
+      error: "That username is already taken.",
+      redirectTo,
+      email,
+      step: "signup",
+    });
   }
 
   const supabase = await createClient();
@@ -97,7 +116,12 @@ export async function signUpAction(formData: FormData) {
   });
 
   if (error) {
-    loginError(error.message, redirectTo);
+    loginFlowRedirect({
+      error: error.message,
+      redirectTo,
+      email,
+      step: "signup",
+    });
   }
 
   const userId = data.user?.id;
@@ -107,15 +131,30 @@ export async function signUpAction(formData: FormData) {
       .insert({ id: userId, username });
 
     if (profileError) {
-      // Most likely a race on the unique username: roll back the auth user.
       await admin.auth.admin.deleteUser(userId).catch(() => {});
-      loginError("That username is already taken.", redirectTo);
+      loginFlowRedirect({
+        error: "That username is already taken.",
+        redirectTo,
+        email,
+        step: "signup",
+      });
     }
   }
 
-  redirect(
-    `/login?notice=${encodeURIComponent("Check your email to confirm your account, then sign in.")}&redirectTo=${encodeURIComponent(redirectTo)}`,
-  );
+  loginFlowRedirect({
+    notice: "Check your email to confirm your account, then sign in.",
+    redirectTo,
+    email,
+    step: "signin",
+  });
+}
+
+function parseRating(value: FormDataEntryValue | null) {
+  const rating = Number(value);
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+    return null;
+  }
+  return rating;
 }
 
 export async function updateUsernameAction(formData: FormData) {

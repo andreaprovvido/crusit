@@ -1,4 +1,8 @@
+import { createAdminClient } from "@/lib/supabase/admin";
+
 const PRODUCTION_SITE_URL = "https://www.crusit.com";
+
+export type LoginFlowStep = "email" | "signin" | "signup";
 
 /** Public site URL (may be localhost in local dev). */
 export function getPublicSiteUrl() {
@@ -31,4 +35,35 @@ export function buildAuthCallbackUrl(next = "/spots") {
   const url = new URL("/auth/callback", getAuthSiteUrl());
   url.searchParams.set("next", safeNext);
   return url.toString();
+}
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function normalizeAuthEmail(email: string) {
+  return email.trim().toLowerCase();
+}
+
+export function isValidAuthEmail(email: string) {
+  return EMAIL_PATTERN.test(normalizeAuthEmail(email));
+}
+
+/** Looks up whether an email is already registered in Supabase Auth. */
+export async function isEmailRegistered(email: string) {
+  const admin = createAdminClient();
+  const target = normalizeAuthEmail(email);
+  let page = 1;
+
+  while (true) {
+    const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+    if (error) throw new Error(error.message);
+
+    const users = data.users ?? [];
+    if (users.some((user) => user.email?.toLowerCase() === target)) {
+      return true;
+    }
+    if (users.length < 1000) {
+      return false;
+    }
+    page += 1;
+  }
 }
