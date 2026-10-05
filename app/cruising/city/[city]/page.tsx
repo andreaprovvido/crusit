@@ -7,6 +7,7 @@ import {
   getSpotsByCityForMap,
   type CityFacet,
 } from "@/lib/spots";
+import { getPlaceSummary } from "@/lib/editorial/places";
 import {
   breadcrumbJsonLd,
   buildCityMetadata,
@@ -37,6 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       country: facet.country,
       spotCount: facet.count,
       path: `/cruising/city/${slug}`,
+      summary: getPlaceSummary("city", slug),
     });
   } catch {
     return { title: "City", robots: { index: false, follow: false } };
@@ -69,6 +71,7 @@ export default async function CityPage({ params, searchParams }: PageProps) {
   const siteUrl = getSiteUrl();
   const basePath = `/cruising/city/${slug}`;
   const where = facet.country ? `${facet.city}, ${facet.country}` : facet.city;
+  const summary = getPlaceSummary("city", slug);
 
   return (
     <>
@@ -98,7 +101,10 @@ export default async function CityPage({ params, searchParams }: PageProps) {
       <SpotCollectionView
         eyebrow="City guide"
         title={`Cruising in ${facet.city}`}
-        description={`Find the best gay cruising spots in ${where}. Browse ${total} community-reviewed location${total === 1 ? "" : "s"} with maps, ratings, and reviews.`}
+        description={
+          summary ??
+          `Find the best gay cruising spots in ${where}. Browse ${total} community-reviewed location${total === 1 ? "" : "s"} with maps, ratings, and reviews.`
+        }
         spots={spots}
         mapSpots={mapSpots}
         total={total}

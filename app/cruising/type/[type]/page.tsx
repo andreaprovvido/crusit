@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import SpotCollectionView from "@/app/components/spots/SpotCollectionView";
 import { SPOT_TYPES, spotTypeLabel } from "@/lib/spotTypes";
 import { getSpots, getSpotsForMap } from "@/lib/spots";
+import { getPlaceSummary } from "@/lib/editorial/places";
 import {
   breadcrumbJsonLd,
   buildCategoryMetadata,
@@ -30,6 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return buildCategoryMetadata({
     categoryValue: value,
     path: `/cruising/type/${slug}`,
+    summary: getPlaceSummary("type", slug),
   });
 }
 
@@ -76,7 +78,10 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
       <SpotCollectionView
         eyebrow="Category"
         title={`${label} Cruising Spots`}
-        description={`Explore ${total} ${label.toLowerCase()} gay cruising spot${total === 1 ? "" : "s"} worldwide. Browse the map, read reviews, and discover new locations.`}
+        description={
+          getPlaceSummary("type", slug) ??
+          `Explore ${total} ${label.toLowerCase()} gay cruising spot${total === 1 ? "" : "s"} worldwide. Browse the map, read reviews, and discover new locations.`
+        }
         spots={spots}
         mapSpots={mapSpots}
         total={total}

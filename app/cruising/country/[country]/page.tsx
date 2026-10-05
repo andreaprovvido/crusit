@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import SpotCollectionView from "@/app/components/spots/SpotCollectionView";
 import { COUNTRIES } from "@/lib/countries";
 import { getSpots, getSpotsForMap } from "@/lib/spots";
+import { getPlaceSummary } from "@/lib/editorial/places";
 import {
   breadcrumbJsonLd,
   buildCountryMetadata,
@@ -35,9 +36,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       country,
       spotCount: total,
       path: `/cruising/country/${slug}`,
+      summary: getPlaceSummary("country", slug),
     });
   } catch {
-    return buildCountryMetadata({ country, path: `/cruising/country/${slug}` });
+    return buildCountryMetadata({
+      country,
+      path: `/cruising/country/${slug}`,
+      summary: getPlaceSummary("country", slug),
+    });
   }
 }
 
@@ -82,7 +88,10 @@ export default async function CountryPage({ params, searchParams }: PageProps) {
       <SpotCollectionView
         eyebrow="Country guide"
         title={`Cruising in ${country}`}
-        description={`Discover ${total} community-reviewed gay cruising spot${total === 1 ? "" : "s"} across ${country}. Explore the map, read reviews, and find your next spot.`}
+        description={
+          getPlaceSummary("country", slug) ??
+          `Discover ${total} community-reviewed gay cruising spot${total === 1 ? "" : "s"} across ${country}. Explore the map, read reviews, and find your next spot.`
+        }
         spots={spots}
         mapSpots={mapSpots}
         total={total}

@@ -1,9 +1,13 @@
+import Link from "next/link";
+import type { ReactNode } from "react";
+
 // Minimal, safe rich-text renderer for admin-authored content.
 // Supported syntax (line-based, no raw HTML — everything renders as React):
 //   "## heading"   -> h2
 //   "### heading"  -> h3
 //   "- item"       -> bullet list
 //   blank line     -> paragraph break
+//   [label](/path) -> internal link (relative paths only)
 
 type Block =
   | { type: "h2"; text: string }
@@ -64,6 +68,33 @@ function parseBlocks(source: string): Block[] {
   return blocks;
 }
 
+const LINK = /\[([^\]]+)\]\((\/(?!\/)[^)\s]*)\)/g;
+
+function renderInline(text: string, keyPrefix: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  let last = 0;
+  let index = 0;
+
+  for (const match of text.matchAll(LINK)) {
+    const start = match.index ?? 0;
+    if (start > last) nodes.push(text.slice(last, start));
+    nodes.push(
+      <Link
+        key={`${keyPrefix}-${index}`}
+        href={match[2]}
+        className="text-emerald-400 underline-offset-2 hover:text-emerald-300 hover:underline"
+      >
+        {match[1]}
+      </Link>,
+    );
+    last = start + match[0].length;
+    index += 1;
+  }
+
+  if (last < text.length) nodes.push(text.slice(last));
+  return nodes;
+}
+
 export default function RichText({ content }: { content: string }) {
   const blocks = parseBlocks(content);
 
@@ -90,14 +121,14 @@ export default function RichText({ content }: { content: string }) {
             return (
               <ul key={index} className="list-disc space-y-2 pl-5 text-zinc-300">
                 {block.items.map((item, itemIndex) => (
-                  <li key={itemIndex}>{item}</li>
+                  <li key={itemIndex}>{renderInline(item, `${index}-${itemIndex}`)}</li>
                 ))}
               </ul>
             );
           default:
             return (
               <p key={index} className="text-base leading-relaxed text-zinc-300">
-                {block.text}
+                {renderInline(block.text, String(index))}
               </p>
             );
         }

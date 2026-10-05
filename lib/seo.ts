@@ -183,11 +183,13 @@ export function buildCityMetadata({
   country,
   spotCount,
   path,
+  summary,
 }: {
   city: string;
   country?: string;
   spotCount?: number;
   path?: string;
+  summary?: string;
 }): Metadata {
   const title = `Cruising in ${city} | Best Cruising Spots | ${SITE_NAME}`;
   const where = country ? `${city}, ${country}` : city;
@@ -195,7 +197,9 @@ export function buildCityMetadata({
     typeof spotCount === "number"
       ? `${spotCount} community-reviewed location${spotCount === 1 ? "" : "s"}, with`
       : "Browse";
-  const description = `Find the best gay cruising spots in ${where}. ${count} maps, ratings, and honest reviews on Crusit.`;
+  const description =
+    summary ??
+    `Find the best gay cruising spots in ${where}. ${count} maps, ratings, and honest reviews on Crusit.`;
 
   return buildPageMetadata({
     title,
@@ -212,17 +216,21 @@ export function buildCountryMetadata({
   country,
   spotCount,
   path,
+  summary,
 }: {
   country: string;
   spotCount?: number;
   path?: string;
+  summary?: string;
 }): Metadata {
   const title = `Cruising in ${country} | Gay Cruising Guide | ${SITE_NAME}`;
   const count =
     typeof spotCount === "number"
       ? ` across ${spotCount} community-reviewed location${spotCount === 1 ? "" : "s"}`
       : "";
-  const description = `Your guide to gay cruising in ${country}. Discover top-rated cruising spots, maps, and honest community reviews${count} on Crusit.`;
+  const description =
+    summary ??
+    `Your guide to gay cruising in ${country}. Discover top-rated cruising spots, maps, and honest community reviews${count} on Crusit.`;
 
   return buildPageMetadata({
     title,
@@ -239,17 +247,21 @@ export function buildCategoryMetadata({
   categoryValue,
   categoryLabel,
   path,
+  summary,
 }: {
   /** Raw spot_type value, e.g. "beach". */
   categoryValue?: string;
   /** Pre-resolved label, e.g. "Beach". Takes precedence over categoryValue. */
   categoryLabel?: string;
   path?: string;
+  summary?: string;
 }): Metadata {
   const label = categoryLabel ?? spotTypeLabel(categoryValue);
   const title = `${label} Cruising Spots | ${SITE_NAME}`;
   const lowered = label.toLowerCase();
-  const description = `Explore ${lowered} gay cruising spots worldwide. Browse ratings, reviews, and maps for ${lowered} cruising locations on Crusit.`;
+  const description =
+    summary ??
+    `Explore ${lowered} gay cruising spots worldwide. Browse ratings, reviews, and maps for ${lowered} cruising locations on Crusit.`;
 
   return buildPageMetadata({
     title,

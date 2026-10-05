@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import RainbowMeshBackground from "@/app/components/RainbowMeshBackground";
 import RichText from "@/app/components/RichText";
-import { getBlogPostBySlug } from "@/lib/blog";
+import { getAllBlogPosts, getBlogPostBySlug } from "@/lib/blog";
 import {
   blogPostingJsonLd,
   breadcrumbJsonLd,
@@ -42,10 +42,12 @@ function formatDate(iso: string) {
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+  const posts = await getAllBlogPosts();
+  const post = posts.find((entry) => entry.slug === slug);
   if (!post) notFound();
 
   const siteUrl = getSiteUrl();
+  const more = posts.filter((entry) => entry.slug !== post.slug).slice(0, 3);
 
   return (
     <div className="relative overflow-hidden">
@@ -116,7 +118,25 @@ export default async function BlogPostPage({ params }: PageProps) {
           ) : null}
         </article>
 
-        <div className="mt-12 border-t border-zinc-800 pt-6">
+        {more.length > 0 ? (
+          <section className="mt-12 border-t border-zinc-800 pt-8">
+            <h2 className="text-lg font-semibold text-white">More guides</h2>
+            <ul className="mt-4 space-y-3">
+              {more.map((entry) => (
+                <li key={entry.slug}>
+                  <Link
+                    href={`/blog/${entry.slug}`}
+                    className="text-emerald-400 hover:text-emerald-300"
+                  >
+                    {entry.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
+        <div className="mt-8">
           <Link
             href="/blog"
             className="text-sm font-medium text-emerald-400 hover:text-emerald-300"

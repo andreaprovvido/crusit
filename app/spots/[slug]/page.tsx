@@ -7,6 +7,7 @@ import ReviewForm from "@/app/components/reviews/ReviewForm";
 import ReviewList from "@/app/components/reviews/ReviewList";
 import { createClient } from "@/lib/supabase/server";
 import { getReviewsForSpot, getUserReviewForSpot } from "@/lib/reviews";
+import { getSpotGuide, guideSlugForCity } from "@/lib/editorial/spots";
 import { formatRating, formatSpotAddress, getSiteUrl, slugify, spotBreadcrumbJsonLd, spotJsonLd, buildSpotMetadata } from "@/lib/seo";
 import { spotTypeLabel } from "@/lib/spotTypes";
 import { getSpotBySlug } from "@/lib/spots";
@@ -77,6 +78,16 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
     existingReview = null;
   }
   const siteUrl = getSiteUrl();
+  const guide = getSpotGuide(spot.slug);
+  const cityGuideSlug = guideSlugForCity(slugify(spot.city));
+  const indexedSpot = guide
+    ? {
+        ...spot,
+        description: [spot.description, ...guide.sections.map((section) => section.body)].join(
+          " ",
+        ),
+      }
+    : spot;
 
   return (
     <div className="relative overflow-hidden">
@@ -85,7 +96,7 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(spotJsonLd(spot, siteUrl)),
+          __html: JSON.stringify(spotJsonLd(indexedSpot, siteUrl)),
         }}
       />
       <script
@@ -114,6 +125,16 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
         <p className="mt-2 text-emerald-400">{formatRating(spot.rating_avg, spot.rating_count)}</p>
         <p className="mt-2 text-zinc-400">{formatSpotAddress(spot)}</p>
         <p className="mt-6 text-base leading-relaxed text-zinc-300">{spot.description}</p>
+        {guide ? (
+          <div className="mt-8 space-y-6">
+            {guide.sections.map((section) => (
+              <section key={section.heading}>
+                <h2 className="text-lg font-semibold text-white">{section.heading}</h2>
+                <p className="mt-2 text-base leading-relaxed text-zinc-300">{section.body}</p>
+              </section>
+            ))}
+          </div>
+        ) : null}
         <div className="mt-4 flex flex-wrap gap-2 text-sm">
           {spot.city ? (
             <Link
@@ -121,6 +142,14 @@ export default async function SpotDetailPage({ params, searchParams }: PageProps
               className="rounded-lg border border-zinc-700 px-3 py-1.5 text-zinc-300 hover:border-zinc-500 hover:text-white"
             >
               More in {spot.city}
+            </Link>
+          ) : null}
+          {cityGuideSlug ? (
+            <Link
+              href={`/blog/${cityGuideSlug}`}
+              className="rounded-lg border border-zinc-700 px-3 py-1.5 text-zinc-300 hover:border-zinc-500 hover:text-white"
+            >
+              Read the guide
             </Link>
           ) : null}
           {spot.country ? (
