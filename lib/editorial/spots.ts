@@ -225,8 +225,12 @@ const CITY_GUIDES: Record<string, string> = {
   "san-francisco": "cruising-in-san-francisco",
   provincetown: "cruising-in-provincetown",
   "san-diego": "famous-gay-beaches",
-  "miami-beach": "famous-gay-beaches",
+  "miami-beach": "cruising-in-miami",
   "rehoboth-beach": "famous-gay-beaches",
+  washington: "cruising-in-washington",
+  seattle: "cruising-in-seattle",
+  "kansas-city": "cruising-in-kansas-city",
+  sydney: "cruising-in-sydney",
 };
 
 export function getSpotGuide(slug: string): SpotGuide | undefined {

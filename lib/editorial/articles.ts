@@ -17,13 +17,14 @@ const MODIFIED = "2026-10-05T12:00:00.000Z";
 function article(
   input: Omit<EditorialArticle, "author" | "modifiedTime" | "readingMinutes"> & {
     readingMinutes?: number;
+    modifiedTime?: string;
   },
 ): EditorialArticle {
   const words = input.body.split(/\s+/).filter(Boolean).length;
   return {
     ...input,
     author: AUTHOR,
-    modifiedTime: MODIFIED,
+    modifiedTime: input.modifiedTime ?? MODIFIED,
     readingMinutes: input.readingMinutes ?? Math.max(4, Math.round(words / 180)),
   };
 }
@@ -37,11 +38,12 @@ export const EDITORIAL_ARTICLES: EditorialArticle[] = [
     excerpt:
       "The map is the start. City guides, categories, and comments are how you decide whether a pin is worth the trip.",
     publishedTime: "2026-06-15T09:00:00.000Z",
+    modifiedTime: "2026-10-19T09:00:00.000Z",
     tags: ["guide", "getting-started"],
     body: `Crusit is a directory of gay cruising spots: a pin, a category, a description, and comments from people who went. It is not a live chat and it does not tell you who is there right now. Used that way, it is much more useful.
 
 ## Start with a place, not the whole world
-Open [Explore](/spots) and zoom to the city you are actually in. A world map full of pins looks complete and tells you nothing about tonight. If the city has a guide, start there: [Rome](/blog/cruising-in-rome), [Berlin](/blog/cruising-in-berlin), [Amsterdam](/blog/cruising-in-amsterdam), [Paris](/blog/cruising-in-paris), [New York](/blog/cruising-in-new-york), and [San Francisco](/blog/cruising-in-san-francisco) are written as circuits, not as single dots.
+Open [Explore](/spots) and zoom to the city you are actually in. A world map full of pins looks complete and tells you nothing about tonight. If the city has a guide, start there: [Rome](/blog/cruising-in-rome), [Berlin](/blog/cruising-in-berlin), [Amsterdam](/blog/cruising-in-amsterdam), [Paris](/blog/cruising-in-paris), [New York](/blog/cruising-in-new-york), [San Francisco](/blog/cruising-in-san-francisco), [Washington](/blog/cruising-in-washington), [Miami](/blog/cruising-in-miami), and [Sydney](/blog/cruising-in-sydney) are written as circuits, not as single dots.
 
 ## Read the category before the pin
 A [beach](/cruising/type/beach), a [park](/cruising/type/park), and a [forest](/cruising/type/forest) fail in different ways. Beaches depend on weather and parking. Parks depend on the hour. Forests depend on whether you can get back to the trailhead. The category page is the faster filter when you already know which of those you want.
@@ -392,6 +394,109 @@ Charged phone, location shared with one person who knows the neighbourhood and t
 A beach in daylight — [Haulover](/spots/haulover-beach-north-miami), [Bassa Rodona](/spots/bassa-rodona-sitges), [Herring Cove](/spots/herring-cove-south-provincetown) — is socially easier than a dark park, with the tradeoff that you are more visible. A sauna or club, when we have one listed, has a door and a fee and fewer dogs.
 
 Then, if you learned something about the place, put it in a comment. The next first-timer is who the site is for.`,
+  }),
+  article({
+    slug: "cruising-in-washington",
+    title: "Cruising in Washington, D.C.: P Street Beach and the Black Forest",
+    description:
+      "A practical guide to Washington’s outdoor spot: the grass south of the P Street Bridge in Rock Creek Park, and the wooded slope beside it.",
+    excerpt:
+      "A documented queer landmark a short walk from Dupont Circle. The grass is the daytime place; the woods are the part to treat as a city park after dark.",
+    publishedTime: "2026-10-19T09:00:00.000Z",
+    modifiedTime: "2026-10-19T09:00:00.000Z",
+    tags: ["washington", "united-states", "guide"],
+    body: `Washington’s outdoor ground is one hillside, not a circuit of beaches. It is also a Pride landmark, which is a reason to know the history and not a reason to treat the park as private.
+
+## The grass
+[P Street Beach](/spots/p-street-beach-rock-creek-dc) is the lawn south of the P Street Bridge, where Rock Creek and the parkway meet. Walk from Dupont Circle. In warm weather the grass is a sunbathing spot, open enough that anyone crossing the bridge can see it. DC’s first unofficial Pride gathering was here in 1972. That fact is in the city’s own queer history. It does not change who else is using the park today.
+
+## The slope
+The wooded hillside beside the lawn is the Black Forest, the area older guides meant when they talked about the night. It is still Rock Creek Park. US Park Police patrol it. Carry ID, stay on ground you could walk back from, and do not plan the evening as if the trees were a venue with a door.
+
+## How to use the day
+Go in daylight the first time so the bridge, the creek, and the way back to Dupont are obvious. If you want a beach instead, this is the wrong city: the [Miami](/blog/cruising-in-miami) and [Provincetown](/blog/cruising-in-provincetown) guides are the coastal version of the same idea. The [Washington page](/cruising/city/washington) has the pin and whatever comments are actually recent.`,
+  }),
+  article({
+    slug: "cruising-in-miami",
+    title: "Cruising in Miami: the north end of Haulover Beach",
+    description:
+      "How to use Haulover’s legal clothing-optional section: which lifeguard towers, where to park, and how it differs from an unsigned gay beach.",
+    excerpt:
+      "Miami-Dade’s nude beach is a posted stretch with lifeguards. The gayer end is the walk north, not the first towel you see.",
+    publishedTime: "2026-10-19T09:00:00.000Z",
+    modifiedTime: "2026-10-19T09:00:00.000Z",
+    tags: ["miami", "united-states", "beaches", "guide"],
+    body: `Haulover is the opposite of a hidden dune. Miami-Dade has recognized the clothing-optional section since 1991, staffs it with lifeguards, and sells you a parking spot. Read it as a busy public beach with a rule, not as a park after dark.
+
+## Where to sit
+[The north section](/spots/haulover-beach-north-miami) runs between lifeguard towers 12 and 16. The gay crowd settles toward 15 and 16. Park at 10800 Collins Avenue and walk north through the textile beach until the towels change. Stopping at the first nude sunbather puts you in the section, not at the end of it.
+
+## What kind of day it is
+Summer weekends fill the lot early. The concessions and the lifeguard stands are part of the setting, which is why it suits a first beach day better than [Black’s](/spots/blacks-beach-san-diego), where the way down is a cliff path with no guard on the gliderport route. It is also more regulated than [Poodle Beach](/spots/poodle-beach-rehoboth), which is only an unsigned end of a boardwalk.
+
+## Before you leave the car
+Bring water, and a way home that still works if you stay until the lot thins out. Nudity here is the local rule for that stretch. It is not a general Florida rule, and it is not permission for anything else on the sand. The [beach category](/cruising/type/beach) shows how the other strands on Crusit differ. The [Miami Beach page](/cruising/city/miami-beach) is the pin itself.`,
+  }),
+  article({
+    slug: "cruising-in-sydney",
+    title: "Cruising in Sydney: Obelisk Beach and the harbour bush",
+    description:
+      "Sydney’s harbour nude beach, Obelisk in Mosman: how the sand and the bush trails split the day, and what national-park access changes.",
+    excerpt:
+      "A cove in Sydney Harbour National Park. The beach is the social part. The bush beside it is the cover, and other hikers use the same headland.",
+    publishedTime: "2026-10-19T09:00:00.000Z",
+    modifiedTime: "2026-10-19T09:00:00.000Z",
+    tags: ["sydney", "australia", "beaches", "guide"],
+    body: `Sydney on Crusit is one cove, and the mistake is to treat it like a bar beach in Sitges. Obelisk is inside a national park, on the harbour, with a walk in and a walk out.
+
+## The cove
+[Obelisk Beach](/spots/obelisk-beach-sydney), in Mosman, is the nude strand. Daytime is when it makes sense: you can see the track, the water, and who else is on the sand. Harbour weather turns faster than the forecast you read in the city. Check the park access before you promise anyone a short stroll.
+
+## The bush
+The trails beside the beach are the part people use when they want cover. They are the same headland other visitors use to look at the harbour. A nude beach with a view is still a public park. Step aside for hikers, and do not assume a side path is unsupervised because it left the sand.
+
+## How it compares
+If you wanted lifeguards, numbered towers, and a parking lot on a highway, that is [Haulover](/blog/cruising-in-miami). If you wanted a dune reserve with a kiosk number, that is [Maspalomas](/spots/maspalomas-dunes-kiosk-7-gran-canaria). Obelisk is the small, scenic version: one cove, a track, and a reason to leave while you can still find the start of the path. The [Sydney page](/cruising/city/sydney) is the listing.`,
+  }),
+  article({
+    slug: "cruising-in-seattle",
+    title: "Cruising in Seattle: Herring’s House Park on the Duwamish",
+    description:
+      "Seattle’s low-key outdoor spot: Herring’s House Park in industrial southwest, the Duwamish trails, and why it is not a Capitol Hill night.",
+    excerpt:
+      "A restored estuary park with a parking area and river trails. Quieter than the neighbourhood people mean when they say Seattle, and more exposed after dark.",
+    publishedTime: "2026-10-19T09:00:00.000Z",
+    modifiedTime: "2026-10-19T09:00:00.000Z",
+    tags: ["seattle", "united-states", "guide"],
+    body: `Seattle does not have a beach circuit on Crusit. The listed ground is a small park in an industrial stretch of the Duwamish, and the honest description is that it is quieter than the stories attached to older cruising guides.
+
+## The park
+[Herring’s House Park](/spots/herrings-house-park-seattle) is at 4570 West Marginal Way SW: woodland trails, a river view, and a parking area. The Duwamish Trail passes it, so you will share the paths with people who are walking. The habitat restoration brought that traffic back on purpose. Daytime is the readable version of the place. After dark it is a poorly lit edge of the city, not a meadow with a monument in the middle.
+
+## What not to expect
+Capitol Hill is bars and a neighbourhood. This is a 15-acre estuary. If you wanted a central park you can leave on foot toward a metro, look at [Parco Sempione](/blog/cruising-in-milan) or [Tiergarten](/blog/cruising-in-berlin) and accept that Seattle’s pin is a different kind of trip. Go once in the light, see whether the lot and the trails match what you came for, and treat a recent comment as more current than this paragraph.
+
+The [Seattle page](/cruising/city/seattle) is where that comment would sit.`,
+  }),
+  article({
+    slug: "cruising-in-kansas-city",
+    title: "Cruising in Kansas City: the Liberty Memorial grounds",
+    description:
+      "What is left of Kansas City’s outdoor spot: the drives and trails around the National WWI Museum in Penn Valley Park, and why the old scene is mostly gone.",
+    excerpt:
+      "A museum hill with a long cruising history and a much quieter present. Go for a walk you could explain, not for a crowd that is not there.",
+    publishedTime: "2026-10-19T09:00:00.000Z",
+    modifiedTime: "2026-10-19T09:00:00.000Z",
+    tags: ["kansas-city", "united-states", "guide"],
+    body: `Kansas City has no beach culture, and the historic outdoor ground is not a park that still runs on 1970s habits. The useful guide is the short one.
+
+## The hill
+[The Liberty Memorial](/spots/liberty-memorial-kansas-city) is the National WWI Museum and Memorial at 2 Memorial Drive, in Penn Valley Park. Older patterns were cars on the drives around the monument and people on the wooded trails. Security around the memorial is heavier now, and a lot of the drive-by scene described in old guides is gone. What remains is a major museum on a hill that some men still use as a walk.
+
+## How to treat it
+Arrive as you would at any civic landmark: daylight first, nothing that depends on an empty road, no plan that only works if a crowd appears. If the comments on the listing are old, believe the empty parking loop in front of you. [Seattle’s estuary park](/blog/cruising-in-seattle) is the other inland pin on Crusit with the same lesson. The coastal cities — [New York](/blog/cruising-in-new-york), [Miami](/blog/cruising-in-miami), [Provincetown](/blog/cruising-in-provincetown) — are a different trip entirely.
+
+The [Kansas City page](/cruising/city/kansas-city) is the pin. A new comment does more for the next person than another retelling of the 1970s.`,
   }),
 ];
 
