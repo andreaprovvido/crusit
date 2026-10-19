@@ -218,7 +218,7 @@ const CITY_GUIDES: Record<string, string> = {
   lisbon: "cruising-in-lisbon",
   "costa-da-caparica": "cruising-in-lisbon",
   mykonos: "famous-gay-beaches",
-  sydney: "famous-gay-beaches",
+  sydney: "cruising-in-sydney",
   "new-york": "cruising-in-new-york",
   queens: "cruising-in-new-york",
   "fire-island": "cruising-in-new-york",
@@ -230,7 +230,6 @@ const CITY_GUIDES: Record<string, string> = {
   washington: "cruising-in-washington",
   seattle: "cruising-in-seattle",
   "kansas-city": "cruising-in-kansas-city",
-  sydney: "cruising-in-sydney",
 };
 
 export function getSpotGuide(slug: string): SpotGuide | undefined {
