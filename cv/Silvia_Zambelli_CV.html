@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CV — Silvia Zambelli</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 16mm;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: #1a1a1a;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.35;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 22pt;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin: 0 0 10px;
+      color: #333;
+      font-size: 10pt;
+      line-height: 1.45;
+    }
+
+    .contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 14px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid #222;
+      font-size: 9.5pt;
+    }
+
+    .contact span {
+      white-space: nowrap;
+    }
+
+    h2 {
+      margin: 16px 0 8px;
+      padding-bottom: 3px;
+      border-bottom: 1px solid #444;
+      font-size: 11.5pt;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 11pt;
+      font-weight: 700;
+    }
+
+    .role-meta {
+      margin: 1px 0 4px;
+      color: #333;
+      font-size: 9.5pt;
+    }
+
+    .role-meta .org {
+      font-weight: 600;
+    }
+
+    .entry {
+      margin-bottom: 12px;
+      break-inside: avoid;
+    }
+
+    ul {
+      margin: 4px 0 0;
+      padding-left: 16px;
+    }
+
+    li {
+      margin-bottom: 3px;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 4px 12px;
+      margin-top: 4px;
+    }
+
+    .skills-grid .label {
+      font-weight: 700;
+    }
+
+    .soft-block {
+      margin-bottom: 8px;
+    }
+
+    .soft-block .label {
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .lang-item {
+      margin-bottom: 6px;
+    }
+
+    .lang-item strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .quote {
+      margin: 10px 0;
+      font-style: italic;
+    }
+
+    .quote cite {
+      display: block;
+      margin-top: 4px;
+      font-style: normal;
+      font-size: 9.5pt;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      padding-top: 10px;
+      border-top: 1px solid #ccc;
+      font-size: 8.5pt;
+      color: #444;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Silvia Zambelli</h1>
+    <p class="subtitle">
+      Laureata in Fisica con una solida formazione accademica e professionale in programmazione,
+      analisi dati, gestione database e visualizzazione dati. Esperienza nello sviluppo di sistemi
+      RAG, LLM e application-ai a supporto di ricerca, chatbot e processi aziendali. Appassionata di
+      tecnologie e fisica applicata, cerco opportunità per contribuire con precisione e creatività alla
+      risoluzione di sfide complesse. Disponibile ad apprendere e crescere in un ambiente dinamico.
+      Automunita e disponibile per trasferte.
+    </p>
+    <div class="contact">
+      <span>silvia.zambelli99@gmail.com</span>
+      <span>+39 379-136-4717</span>
+      <span>Garbagnate Milanese, MILANO</span>
+      <span>31/10/1999</span>
+      <span>Patente A, B</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>Esperienze professionali</h2>
+
+    <article class="entry">
+      <h3>Data Scientist / Data Analyst</h3>
+      <p class="role-meta">
+        <span class="org">Voice Of Wealth</span> · Febbraio 2025 – oggi · Milano
+      </p>
+      <ul>
+        <li>
+          Responsabile della gestione di tutti i dati e database aziendali, inclusa la progettazione
+          e implementazione di Data Warehouse su Google Cloud Console.
+        </li>
+        <li>
+          Sviluppo front-end e back-end WordPress con gestione database tramite MariaDBeaver (SQL)
+          per il sito aziendale.
+        </li>
+        <li>
+          Google Cloud Console: utilizzo di Python per l’integrazione di dati da fonti multiple
+          (API, file, applicazioni ecc.) e BigQuery SQL per la gestione e l’analisi dei dati, con
+          automazione dei processi tramite Cloud Run e Job Scheduler.
+        </li>
+        <li>
+          Sviluppo di report schedulati e automatizzati tramite Looker Studio per il monitoraggio
+          delle performance aziendali.
+        </li>
+        <li>
+          Progettazione e sviluppo end-to-end di un sistema RAG (Retrieval-Augmented Generation)
+          per l’indicizzazione dei contenuti aziendali, ottimizzando ricerca semantica e chatbot.
+        </li>
+        <li>
+          Sviluppo di application-ai per strutture di elaborazione, raccolta, selezione e utilizzo
+          dei dati a scopo aziendale; tra cui GDPR Radar, soluzione per il monitoraggio e
+          l’applicazione della privacy policy.
+        </li>
+        <li>
+          Integrazione di soluzioni di intelligenza artificiale sul sito web (chatbot e sistemi FAQ)
+          per migliorare l’esperienza utente (UX).
+        </li>
+      </ul>
+    </article>
+
+    <article class="entry">
+      <h3>Supporto alla didattica</h3>
+      <p class="role-meta">
+        <span class="org">Corso di prototipazione e programmazione Arduino</span> ·
+        Febbraio – Giugno 2022 · Laboratori PLS, Como
+      </p>
+      <ul>
+        <li>
+          Creazione e progettazione di attività pratiche e progetti tecnici per gli studenti delle
+          scuole superiori.
+        </li>
+        <li>
+          Insegnamento dei fondamenti teorici e pratici relativi alla programmazione di Arduino,
+          con un focus sul linguaggio C/C++.
+        </li>
+        <li>
+          Assistenza diretta agli studenti durante le attività laboratoriali, supportando la
+          comprensione e l’applicazione delle tecniche di prototipazione elettronica.
+        </li>
+      </ul>
+    </article>
+  </section>
+
+  <section>
+    <h2>Formazione accademica</h2>
+
+    <article class="entry">
+      <h3>Laurea Triennale in Fisica</h3>
+      <p class="role-meta">
+        <span class="org">Università degli Studi dell’Insubria</span> · 2018 – 2022 · Como
+      </p>
+      <p>
+        Titolo tesi: «Studio delle possibili fonti di perdita per l’utilizzo di stati Twin-Beam
+        mesoscopici in protocolli di comunicazione quantistica subacquea»
+      </p>
+    </article>
+
+    <article class="entry">
+      <h3>Diploma Liceo Scientifico Scienze Applicate</h3>
+      <p class="role-meta">
+        <span class="org">IIS Bertrand Russell</span> · 2013 – 2018 · Garbagnate Milanese
+      </p>
+    </article>
+  </section>
+
+  <section>
+    <h2>Progetti accademici rilevanti</h2>
+
+    <article class="entry">
+      <h3>Analisi BigData</h3>
+      <ul>
+        <li>Statistica: calcolo di medie, mediane, chi², deviazioni standard e incertezze.</li>
+        <li>Analisi dati: analisi di distribuzione spaziale, clustering di dati.</li>
+        <li>
+          Elaborazione e visualizzazione dati: filtraggio dei dati, applicazione del sign test,
+          rimozione di fluttuazioni spurie e creazione di mappe di intensità.
+        </li>
+      </ul>
+    </article>
+
+    <article class="entry">
+      <h3>Laboratorio di Elettronica</h3>
+      <ul>
+        <li>Statistica: calcolo di medie, chi², deviazioni standard ed incertezze.</li>
+        <li>
+          Analisi dati: individuazione e risoluzione di offset e saturazione dei segnali,
+          determinazione di parametri elettronici, fitting di curve teoriche, fitting lineari ed
+          interpolazione dei dati.
+        </li>
+        <li>
+          Elaborazione e visualizzazione dati: grafici di confronto dell’andamento
+          teorico-sperimentale e diagrammi di Bode.
+        </li>
+      </ul>
+    </article>
+
+    <article class="entry">
+      <h3>Laboratorio di Meccanica e Sistemi Complessi</h3>
+      <ul>
+        <li>
+          Statistica: propagazione degli errori, stima di intervalli di confidenza, calcolo
+          pull-function, tecniche di rigetto di dati.
+        </li>
+        <li>
+          Analisi dati: fitting di curve teoriche, determinazione di parametri fisici,
+          identificazione di picchi di segnale, analisi di serie temporali.
+        </li>
+        <li>
+          Elaborazione e visualizzazione dati: strategie per l’eliminazione del rumore, metodi di
+          derivazione numerica dei dati, grafici temporali.
+        </li>
+      </ul>
+    </article>
+
+    <article class="entry">
+      <h3>Laboratorio di Ottica</h3>
+      <ul>
+        <li>Statistica: analisi di distribuzioni statistiche, analisi di Fourier e covarianza.</li>
+        <li>
+          Analisi dati: identificazione variabili di correlazioni, determinazione di parametri
+          ottici, fitting di curve lineari, non lineari e modelli teorici.
+        </li>
+        <li>Elaborazione e visualizzazione dati: grafici 2D e distribuzioni di intensità.</li>
+      </ul>
+    </article>
+  </section>
+
+  <section>
+    <h2>Competenze tecniche</h2>
+    <div class="skills-grid">
+      <div class="label">Intelligenza Artificiale</div>
+      <div>
+        RAG (Retrieval-Augmented Generation) | LLM | AI generativa | Embedding e indicizzazione
+        semantica | Chatbot | Application AI
+      </div>
+
+      <div class="label">Programmazione</div>
+      <div>Python | Matlab | C++ | C | LabView | Arduino IDE</div>
+
+      <div class="label">Database &amp; Cloud Computing</div>
+      <div>BigQuery | SQL | Google Cloud Console | Cloud Run | Job Scheduler</div>
+
+      <div class="label">Web Development</div>
+      <div>WordPress | CSS | HTML | JavaScript | PHP | JSON</div>
+
+      <div class="label">API &amp; Integrations</div>
+      <div>API calls | AI integration | Data extraction | Data importation</div>
+
+      <div class="label">Analisi e Visualizzazione Dati</div>
+      <div>
+        Looker Studio | Google Analytics | Search Console | Seozoom | LaTeX | Excel | PowerPoint |
+        Statistica | Matematica avanzata | Fitting di dati | Creazione di grafici e istogrammi
+      </div>
+
+      <div class="label">Elettronica</div>
+      <div>LTSpice | Simulazioni circuitali | Arduino</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Competenze trasversali</h2>
+    <div class="soft-block">
+      <div class="label">Collaborazione e Comunicazione</div>
+      <div>Ottime capacità comunicative | Team-working | Ascolto attivo | Empatia</div>
+    </div>
+    <div class="soft-block">
+      <div class="label">Problem-Solving e Adattabilità</div>
+      <div>
+        Approccio proattivo alla risoluzione dei problemi | Pensiero critico | Adattabilità |
+        Strategie innovative
+      </div>
+    </div>
+    <div class="soft-block">
+      <div class="label">Gestione e Organizzazione</div>
+      <div>
+        Eccellenti capacità analitiche e organizzative | Attenzione ai dettagli | Gestione del tempo
+        | Determinazione
+      </div>
+    </div>
+    <div class="soft-block">
+      <div class="label">Sviluppo Personale</div>
+      <div>
+        Rapidità nell’apprendimento | Orientamento agli obiettivi | Disinvoltura nella gestione di
+        sfide complesse
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Lingue</h2>
+    <div class="lang-item">
+      <strong>Italiano</strong>
+      Scritto, ascolto e orale: madrelingua.
+    </div>
+    <div class="lang-item">
+      <strong>Inglese</strong>
+      Scritto: eccellenti capacità di redigere testi, report e documentazione tecnica.
+      Ascolto: fluente nella comprensione orale.
+      Orale: in grado di comunicare efficacemente in contesti formali e informali.
+    </div>
+  </section>
+
+  <section>
+    <h2>Pubblicazioni</h2>
+    <p>
+      A. Allevi, S. Zambelli, F. MoltEni, and M. Bondani, “Optimizing the propagation of mesoscopic
+      twin-beam states,” <em>Int. J. Quantum Inform.</em>, 2022.
+      DOI: 10.1142/S021974992340004X.
+    </p>
+  </section>
+
+  <section>
+    <h2>Filosofia di vita</h2>
+    <p class="quote">
+      «Tutti sanno che una cosa è impossibile. Poi arriva uno che non lo sa e la fa.»
+      <cite>— Albert Einstein</cite>
+    </p>
+  </section>
+
+  <section>
+    <h2>Maggiori successi</h2>
+    <article class="entry">
+      <h3>Nuoto Agonistico</h3>
+      <ul>
+        <li>2007 – 2019</li>
+        <li>Campionessa multi-regionale nei 50 e 100 metri stile libero</li>
+        <li>Oro e bronzo ai campionati giovanili italiani nei 50 metri stile libero (2013)</li>
+        <li>Partecipazioni ai campionati assoluti italiani (2013 – 2018)</li>
+      </ul>
+    </article>
+  </section>
+
+  <section>
+    <h2>Altre esperienze</h2>
+
+    <article class="entry">
+      <h3>Alternanza scuola-lavoro</h3>
+      <p class="role-meta">
+        <span class="org">Agenzia De Luca Assicurazioni</span> · Giugno – Agosto 2017 ·
+        Paderno Dugnano (MI)
+      </p>
+      <ul>
+        <li>Gestione telefonica, segreteria e archivio. Accoglienza e gestione clienti.</li>
+        <li>Differenziazione di contratti e polizze.</li>
+      </ul>
+    </article>
+
+    <article class="entry">
+      <h3>Cassiera / Commessa</h3>
+      <p class="role-meta">
+        <span class="org">Zara abbigliamento</span> · Luglio – Settembre 2018 · Il Centro, Arese (MI)
+      </p>
+      <ul>
+        <li>Vendita e assistenza clienti.</li>
+        <li>Gestione magazzino e negozio.</li>
+        <li>Inventario e riordino merce.</li>
+        <li>Apertura e chiusura negozio.</li>
+      </ul>
+    </article>
+
+    <article class="entry">
+      <h3>Barista</h3>
+      <p class="role-meta">
+        <span class="org">Bar Piscina Estiva Comunale</span> · Giu – Set 2019 e 2022 ·
+        Garbagnate Milanese (MI)
+      </p>
+      <ul>
+        <li>Vendita e assistenza clienti.</li>
+        <li>Gestione magazzino e negozio.</li>
+        <li>Inventario e riordino merce.</li>
+        <li>Apertura e chiusura negozio.</li>
+      </ul>
+    </article>
+
+    <article class="entry">
+      <h3>Receptionist e Addetta alle vendite</h3>
+      <p class="role-meta">
+        <span class="org">Palestra Fit Express</span> · Maggio 2024 – Dicembre 2024 ·
+        Garbagnate Milanese (MI)
+      </p>
+      <ul>
+        <li>Vendita e assistenza clienti.</li>
+        <li>Gestione problematiche strutturali e logistiche.</li>
+        <li>Inventario e riordino merce.</li>
+        <li>Emissione e archivio fatture.</li>
+        <li>Apertura e chiusura cassa.</li>
+      </ul>
+    </article>
+  </section>
+
+  <p class="footer-note">
+    Autorizzo il trattamento dei miei dati personali ai sensi del D.lgs. 196/2003 e del Regolamento
+    UE 2016/679 (GDPR) per le finalità di selezione del personale.
+    <br />
+    Garbagnate Mil.se, 26-10-2026
+  </p>
+</body>
+</html>
