@@ -23,18 +23,18 @@ export default function HomePage() {
           <div className="wrap">
             <div className="rise mb-5">
               <Image
-                src="/images/logo.png"
+                src="/images/logo-emblem.png"
                 alt={`${SITE.name} AGESCI`}
-                width={180}
-                height={172}
-                className="h-[5.5rem] w-auto drop-shadow-md sm:h-28"
+                width={140}
+                height={120}
+                className="h-20 w-auto drop-shadow-md sm:h-24"
                 priority
               />
             </div>
             <p className="rise mb-2 text-[0.8rem] font-bold tracking-[0.18em] text-white/90 uppercase">
               {SITE.tagline}
             </p>
-            <h1 className="rise-2 font-display max-w-[12ch] text-[clamp(3rem,11vw,5.75rem)] leading-[0.92] font-bold tracking-[-0.04em] text-white">
+            <h1 className="rise-2 font-display max-w-[11ch] text-[clamp(3.1rem,12vw,5.9rem)] leading-[0.9] font-bold tracking-[-0.04em] text-white drop-shadow-[0_2px_18px_rgba(0,0,0,0.35)]">
               San Giuliano 1
             </h1>
             <p className="rise-3 mt-4 max-w-md text-base leading-relaxed text-white/90 sm:text-lg">

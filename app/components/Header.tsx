@@ -40,16 +40,18 @@ export function Header() {
       <div className="wrap flex items-center justify-between gap-4 py-3.5">
         <Link href="/" className="flex items-center gap-2.5 no-underline">
           <Image
-            src="/images/logo.png"
+            src="/images/logo-emblem.png"
             alt=""
             width={40}
-            height={38}
-            className={`h-9 w-auto ${overHero ? "brightness-110" : ""}`}
+            height={35}
+            className={`h-8 w-auto ${overHero ? "drop-shadow-sm" : ""}`}
             priority
           />
-          <span className="font-display text-[0.95rem] font-bold tracking-tight">
-            {SITE.name}
-          </span>
+          {!overHero ? (
+            <span className="font-display text-[0.95rem] font-bold tracking-tight">
+              {SITE.name}
+            </span>
+          ) : null}
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Principale">

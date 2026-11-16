@@ -30,11 +30,11 @@ export const metadata: Metadata = {
     description: SITE.tagline,
     locale: "it_IT",
     type: "website",
-    images: [{ url: "/images/logo.png" }],
+    images: [{ url: "/images/logo-full.png" }],
   },
   icons: {
-    icon: "/images/logo.png",
-    apple: "/images/logo.png",
+    icon: "/images/logo-emblem.png",
+    apple: "/images/logo-emblem.png",
   },
 };
 
