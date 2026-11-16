@@ -63,6 +63,9 @@ a {
 
 img {
   max-width: 100%;
+}
+
+img:not([data-nimg]) {
   height: auto;
 }
 

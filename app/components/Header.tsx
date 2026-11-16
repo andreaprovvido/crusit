@@ -42,9 +42,10 @@ export function Header() {
           <Image
             src="/images/logo-emblem.png"
             alt=""
-            width={40}
-            height={35}
-            className={`h-8 w-auto ${overHero ? "drop-shadow-sm" : ""}`}
+            width={36}
+            height={31}
+            className={`h-8! w-auto! max-h-8 ${overHero ? "drop-shadow-sm" : ""}`}
+            style={{ width: "auto", height: "2rem" }}
             priority
           />
           {!overHero ? (

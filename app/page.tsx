@@ -25,9 +25,10 @@ export default function HomePage() {
               <Image
                 src="/images/logo-emblem.png"
                 alt={`${SITE.name} AGESCI`}
-                width={140}
-                height={120}
-                className="h-20 w-auto drop-shadow-md sm:h-24"
+                width={112}
+                height={96}
+                className="drop-shadow-md"
+                style={{ width: "auto", height: "5.5rem" }}
                 priority
               />
             </div>
