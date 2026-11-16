@@ -17,7 +17,7 @@ export default function CalendarioPage() {
       />
       <section className="section pt-6">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="overflow-hidden rounded-[1.25rem] border border-[color:var(--line)] bg-[color:var(--bg-elevated)]">
+          <div className="overflow-hidden rounded-[1.25rem] border border-[color:var(--line)] bg-[color:var(--bg-paper)]">
             <iframe
               title="Calendario eventi San Giuliano 1"
               src={SITE.calendarEmbed}

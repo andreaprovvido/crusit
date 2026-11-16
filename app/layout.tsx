@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Outfit, Source_Sans_3 } from "next/font/google";
+import { Karla, Syne } from "next/font/google";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import "./globals.css";
 import { SITE } from "@/lib/content";
 
-const outfit = Outfit({
+const syne = Syne({
   subsets: ["latin"],
-  variable: "--font-outfit",
+  variable: "--font-syne",
   display: "swap",
 });
 
-const sourceSans = Source_Sans_3({
+const karla = Karla({
   subsets: ["latin"],
-  variable: "--font-source-sans",
+  variable: "--font-karla",
   display: "swap",
 });
 
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   description:
     "Sito ufficiale del Gruppo Scout AGESCI San Giuliano 1 di San Giuliano Milanese: documenti, calendario, iscrizioni e blog.",
-  metadataBase: new URL("https://andreaprovvido.github.io/crusit"),
+  metadataBase: new URL("https://andreaprovvido.github.io/sangiuliano1"),
   openGraph: {
     title: `${SITE.name} AGESCI`,
     description: SITE.tagline,
@@ -44,8 +44,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it" className={`${outfit.variable} ${sourceSans.variable}`}>
-      <body className="site-shell flex min-h-dvh flex-col antialiased">
+    <html lang="it" className={`${syne.variable} ${karla.variable}`}>
+      <body className="flex min-h-dvh flex-col antialiased">
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

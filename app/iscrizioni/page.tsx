@@ -24,7 +24,7 @@ export default function IscrizioniPage() {
               href="https://sangiuliano1.wordpress.com/wp-content/uploads/2019/05/patto-associativo_1999.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-[color:var(--gold)]"
+              className="font-semibold text-[color:var(--purple)]"
             >
               AGESCI
             </a>{" "}
@@ -97,7 +97,7 @@ export default function IscrizioniPage() {
             verrete più ricontattati.
           </p>
 
-          <h2 className="font-display mt-10 mb-3 text-xl font-bold text-[color:var(--gold-soft)]">
+          <h2 className="font-display mt-10 mb-3 text-xl font-bold text-[color:var(--purple-deep)]">
             Attenzione 1
           </h2>
           <p>
@@ -114,7 +114,7 @@ export default function IscrizioniPage() {
                   href={g.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-[color:var(--gold)]"
+                  className="font-semibold text-[color:var(--purple)]"
                 >
                   {g.name}
                 </a>
@@ -125,14 +125,14 @@ export default function IscrizioniPage() {
             sul gruppo, scriveteci a{" "}
             <a
               href={`mailto:${SITE.email}`}
-              className="font-semibold text-[color:var(--gold)]"
+              className="font-semibold text-[color:var(--purple)]"
             >
               questa mail
             </a>
             .
           </p>
 
-          <h2 className="font-display mt-10 mb-3 text-xl font-bold text-[color:var(--gold-soft)]">
+          <h2 className="font-display mt-10 mb-3 text-xl font-bold text-[color:var(--purple-deep)]">
             Attenzione 2
           </h2>
           <p>
@@ -149,7 +149,7 @@ export default function IscrizioniPage() {
             indirizzo email istituzionale{" "}
             <a
               href={`mailto:${SITE.email}`}
-              className="font-semibold text-[color:var(--gold)] underline"
+              className="font-semibold text-[color:var(--purple)] underline"
             >
               {SITE.email}
             </a>

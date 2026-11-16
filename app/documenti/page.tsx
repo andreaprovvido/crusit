@@ -20,11 +20,11 @@ export default function DocumentiPage() {
         <div className="mx-auto max-w-6xl space-y-12 px-4 sm:px-6">
           {DOC_SECTIONS.map((section) => (
             <div key={section.id}>
-              <h2 className="font-display text-2xl font-bold tracking-tight text-[color:var(--gold-soft)] sm:text-3xl">
+              <h2 className="font-display text-2xl font-bold tracking-tight text-[color:var(--purple-deep)] sm:text-3xl">
                 {section.title}
               </h2>
               {section.intro ? (
-                <p className="mt-3 max-w-3xl text-[color:var(--ink-muted)]">
+                <p className="mt-3 max-w-3xl text-[color:var(--ink-soft)]">
                   {section.intro}
                 </p>
               ) : null}
@@ -35,7 +35,7 @@ export default function DocumentiPage() {
                       {item.title}
                     </a>
                     {item.note ? (
-                      <p className="text-sm text-[color:var(--ink-muted)]">{item.note}</p>
+                      <p className="text-sm text-[color:var(--ink-soft)]">{item.note}</p>
                     ) : null}
                   </div>
                 ))}

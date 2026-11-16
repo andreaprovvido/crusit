@@ -38,7 +38,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {post.attachments?.length ? (
             <div className="mt-8 border-t border-[color:var(--line)] pt-6">
-              <h2 className="font-display mb-3 text-xl font-bold text-[color:var(--gold-soft)]">
+              <h2 className="font-display mb-3 text-xl font-bold text-[color:var(--purple-deep)]">
                 Allegati
               </h2>
               <ul className="space-y-2">
@@ -48,7 +48,7 @@ export default async function BlogPostPage({ params }: Props) {
                       href={file.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold text-[color:var(--gold)]"
+                      className="font-semibold text-[color:var(--purple)]"
                     >
                       {file.title}
                     </a>
@@ -59,14 +59,14 @@ export default async function BlogPostPage({ params }: Props) {
           ) : null}
 
           <div className="mt-10 flex flex-wrap gap-4 text-sm">
-            <Link href="/blog/" className="font-semibold text-[color:var(--gold)]">
+            <Link href="/blog/" className="font-semibold text-[color:var(--purple)]">
               ← Torna al blog
             </Link>
             <a
               href={SITE.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-[color:var(--ink-muted)]"
+              className="font-semibold text-[color:var(--ink-soft)]"
             >
               Instagram
             </a>
@@ -74,7 +74,7 @@ export default async function BlogPostPage({ params }: Props) {
               href={SITE.facebook}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-[color:var(--ink-muted)]"
+              className="font-semibold text-[color:var(--ink-soft)]"
             >
               Facebook
             </a>

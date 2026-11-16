@@ -1,17 +1,17 @@
 import type { NextConfig } from "next";
 
 const isGhPages = process.env.GITHUB_PAGES === "true";
+const basePath = process.env.BASE_PATH || (isGhPages ? "/sangiuliano1" : "");
 
 const nextConfig: NextConfig = {
   output: "export",
   images: {
     unoptimized: true,
   },
-  // Project Pages URL: https://andreaprovvido.github.io/crusit/
-  ...(isGhPages
+  ...(basePath
     ? {
-        basePath: "/crusit",
-        assetPrefix: "/crusit/",
+        basePath,
+        assetPrefix: `${basePath}/`,
       }
     : {}),
   trailingSlash: true,

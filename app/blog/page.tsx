@@ -26,16 +26,16 @@ export default function BlogPage() {
                   className="group flex flex-col gap-2 py-6 no-underline sm:flex-row sm:items-baseline sm:justify-between sm:gap-8"
                 >
                   <div>
-                    <h2 className="font-display text-2xl font-semibold group-hover:text-[color:var(--gold-soft)]">
+                    <h2 className="font-display text-2xl font-semibold group-hover:text-[color:var(--purple)]">
                       {post.title}
                     </h2>
-                    <p className="mt-2 max-w-3xl text-[color:var(--ink-muted)]">
+                    <p className="mt-2 max-w-3xl text-[color:var(--ink-soft)]">
                       {post.excerpt}
                     </p>
                   </div>
                   <time
                     dateTime={post.date}
-                    className="shrink-0 text-xs font-semibold tracking-wide text-[color:var(--gold)] uppercase"
+                    className="shrink-0 text-xs font-semibold tracking-wide text-[color:var(--purple)] uppercase"
                   >
                     {post.dateLabel}
                   </time>
@@ -44,12 +44,12 @@ export default function BlogPage() {
             ))}
           </ul>
 
-          <div className="mt-10 flex flex-wrap gap-4 text-sm text-[color:var(--ink-muted)]">
+          <div className="mt-10 flex flex-wrap gap-4 text-sm text-[color:var(--ink-soft)]">
             <a
               href={SITE.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-[color:var(--gold)]"
+              className="font-semibold text-[color:var(--purple)]"
             >
               Instagram
             </a>
@@ -57,7 +57,7 @@ export default function BlogPage() {
               href={SITE.facebook}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-[color:var(--gold)]"
+              className="font-semibold text-[color:var(--purple)]"
             >
               Facebook
             </a>

@@ -1,37 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0b0612;
-  --bg-elevated: #140a1f;
-  --bg-soft: #1a1028;
-  --ink: #f6f1ea;
-  --ink-muted: #c9bfd6;
-  --purple: #5c2d91;
-  --purple-bright: #7a45b8;
-  --gold: #e8b923;
-  --gold-soft: #f5d76e;
-  --red: #e23b3b;
-  --red-deep: #b91c1c;
-  --line: rgba(232, 185, 35, 0.22);
-  --font-display: var(--font-outfit);
-  --font-body: var(--font-source-sans);
+  --bg: #f7f6f3;
+  --bg-paper: #ffffff;
+  --ink: #1c1526;
+  --ink-soft: #4a4454;
+  --ink-faint: #7a7386;
+  --purple: #5a2d8c;
+  --purple-deep: #3d1d63;
+  --gold: #c99212;
+  --gold-bright: #e0a820;
+  --red: #d32f2f;
+  --line: #e6e2da;
+  --scrim: rgba(16, 10, 24, 0.55);
+  --font-display: var(--font-syne);
+  --font-body: var(--font-karla);
 }
 
 @theme inline {
   --color-bg: var(--bg);
-  --color-bg-elevated: var(--bg-elevated);
-  --color-bg-soft: var(--bg-soft);
+  --color-bg-paper: var(--bg-paper);
   --color-ink: var(--ink);
-  --color-ink-muted: var(--ink-muted);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
   --color-purple: var(--purple);
-  --color-purple-bright: var(--purple-bright);
+  --color-purple-deep: var(--purple-deep);
   --color-gold: var(--gold);
-  --color-gold-soft: var(--gold-soft);
+  --color-gold-bright: var(--gold-bright);
   --color-red: var(--red);
-  --color-red-deep: var(--red-deep);
   --color-line: var(--line);
-  --font-display: var(--font-outfit);
-  --font-body: var(--font-source-sans);
+  --font-display: var(--font-syne);
+  --font-body: var(--font-karla);
 }
 
 * {
@@ -47,19 +46,19 @@ body {
   min-height: 100dvh;
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-body), "Source Sans 3", sans-serif;
+  font-family: var(--font-body), Karla, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.6;
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--gold) 55%, transparent);
-  color: #120816;
+  background: color-mix(in srgb, var(--gold) 40%, white);
+  color: var(--ink);
 }
 
 a {
   color: inherit;
-  text-decoration-thickness: 0.08em;
-  text-underline-offset: 0.18em;
 }
 
 img {
@@ -67,45 +66,19 @@ img {
   height: auto;
 }
 
-.site-shell {
-  position: relative;
-  isolation: isolate;
-  overflow-x: clip;
-}
-
-.site-shell::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background:
-    radial-gradient(ellipse 80% 55% at 12% -10%, rgba(92, 45, 145, 0.45), transparent 55%),
-    radial-gradient(ellipse 60% 45% at 100% 8%, rgba(226, 59, 59, 0.18), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 70% 100%, rgba(232, 185, 35, 0.12), transparent 55%),
-    linear-gradient(180deg, #09040f 0%, #0b0612 40%, #100818 100%);
-}
-
-.site-shell::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0.35;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
-  mix-blend-mode: soft-light;
-}
-
 .font-display {
-  font-family: var(--font-display), Outfit, sans-serif;
+  font-family: var(--font-display), Syne, sans-serif;
 }
 
-.brand-gradient-text {
-  background: linear-gradient(105deg, var(--gold-soft) 0%, var(--ink) 45%, #f2c4c4 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.wrap {
+  width: min(1120px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+@media (min-width: 640px) {
+  .wrap {
+    width: min(1120px, calc(100% - 3rem));
+  }
 }
 
 .btn {
@@ -113,99 +86,126 @@ img {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-height: 2.85rem;
-  padding: 0.7rem 1.25rem;
+  min-height: 3rem;
+  padding: 0.75rem 1.4rem;
   border-radius: 999px;
+  border: 1px solid transparent;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  text-decoration: none;
   transition:
-    transform 180ms ease,
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease;
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
 }
 
 .btn:hover {
   transform: translateY(-1px);
 }
 
-.btn:active {
-  transform: translateY(0);
-}
-
-.btn-gold {
+.btn-primary {
   background: var(--gold);
-  color: #1a0d24;
+  color: #1c1526;
 }
 
-.btn-gold:hover {
-  background: var(--gold-soft);
+.btn-primary:hover {
+  background: var(--gold-bright);
 }
 
-.btn-ghost {
-  border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
+.btn-secondary {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.7);
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #fff;
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: var(--ink);
   color: var(--ink);
-  background: color-mix(in srgb, var(--bg-elevated) 55%, transparent);
 }
 
-.btn-ghost:hover {
-  border-color: var(--gold);
-  background: color-mix(in srgb, var(--purple) 35%, transparent);
+.btn-outline:hover {
+  background: var(--ink);
+  color: #fff;
 }
 
 .btn-red {
   background: var(--red);
-  color: white;
+  color: #fff;
 }
 
 .btn-red:hover {
-  background: var(--red-deep);
+  background: #b71c1c;
 }
 
 .section {
-  padding: 4.5rem 0;
+  padding: clamp(3.5rem, 8vw, 6rem) 0;
 }
 
 .section-title {
-  font-family: var(--font-display), Outfit, sans-serif;
-  font-size: clamp(1.75rem, 4vw, 2.75rem);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  margin: 0 0 0.75rem;
+  font-family: var(--font-display), Syne, sans-serif;
+  font-size: clamp(1.85rem, 4.2vw, 2.85rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.85rem;
+  color: var(--ink);
 }
 
 .section-lead {
   margin: 0;
-  max-width: 42rem;
-  color: var(--ink-muted);
-  font-size: 1.05rem;
+  max-width: 36rem;
+  color: var(--ink-soft);
+  font-size: 1.08rem;
   line-height: 1.55;
+}
+
+.page-hero {
+  padding: clamp(3rem, 7vw, 5rem) 0 clamp(2.5rem, 5vw, 3.5rem);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-paper);
+}
+
+.page-hero__eyebrow {
+  margin: 0 0 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--purple);
 }
 
 .doc-row {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  padding: 1rem 0;
+  padding: 1.15rem 0;
   border-bottom: 1px solid var(--line);
 }
 
 .doc-row a {
-  color: var(--gold-soft);
+  color: var(--purple-deep);
+  font-weight: 700;
   text-decoration: none;
-  font-weight: 650;
 }
 
 .doc-row a:hover {
-  color: var(--gold);
+  color: var(--red);
   text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .prose-scout p {
-  margin: 0 0 1rem;
-  color: var(--ink-muted);
-  line-height: 1.65;
-  font-size: 1.05rem;
+  margin: 0 0 1.15rem;
+  color: var(--ink-soft);
+  line-height: 1.7;
 }
 
 .prose-scout p:last-child {
@@ -214,12 +214,25 @@ img {
 
 .prose-scout strong {
   color: var(--ink);
+  font-weight: 700;
 }
 
-@keyframes rise-in {
+.prose-scout a {
+  color: var(--purple);
+  font-weight: 700;
+}
+
+.prose-scout h2 {
+  font-family: var(--font-display), Syne, sans-serif;
+  font-size: 1.35rem;
+  margin: 2.25rem 0 0.75rem;
+  color: var(--ink);
+}
+
+@keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -227,37 +240,22 @@ img {
   }
 }
 
-@keyframes soft-glow {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 0.9;
-  }
+.rise {
+  animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.animate-rise {
-  animation: rise-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.rise-2 {
+  animation: rise 800ms cubic-bezier(0.22, 1, 0.36, 1) 110ms both;
 }
 
-.animate-rise-delay {
-  animation: rise-in 800ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
-}
-
-.animate-rise-delay-2 {
-  animation: rise-in 850ms cubic-bezier(0.22, 1, 0.36, 1) 220ms both;
-}
-
-.hero-glow {
-  animation: soft-glow 5.5s ease-in-out infinite;
+.rise-3 {
+  animation: rise 850ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-rise,
-  .animate-rise-delay,
-  .animate-rise-delay-2,
-  .hero-glow {
+  .rise,
+  .rise-2,
+  .rise-3 {
     animation: none;
   }
 
