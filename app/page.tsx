@@ -9,16 +9,16 @@ export default function HomePage() {
     <>
       <section className="relative min-h-[100svh] overflow-hidden">
         <Image
-          src="/images/hero.jpg"
-          alt="Attività del Gruppo Scout San Giuliano 1"
+          src="/images/hero-mountains.jpg"
+          alt="Gruppo Scout San Giuliano 1 in montagna presso un lago alpino"
           fill
           priority
-          className="object-cover object-center"
+          className="object-cover object-[50%_42%]"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,3,14,0.35)_0%,rgba(8,3,14,0.55)_42%,rgba(8,3,14,0.92)_100%)]" />
-        <div className="hero-glow absolute -left-20 top-24 h-64 w-64 rounded-full bg-[color:color-mix(in_srgb,var(--purple)_45%,transparent)] blur-3xl" />
-        <div className="hero-glow absolute right-0 bottom-24 h-56 w-56 rounded-full bg-[color:color-mix(in_srgb,var(--red)_30%,transparent)] blur-3xl" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,3,14,0.28)_0%,rgba(8,3,14,0.45)_38%,rgba(8,3,14,0.88)_78%,rgba(8,3,14,0.96)_100%)]" />
+        <div className="hero-glow absolute -left-20 top-24 h-64 w-64 rounded-full bg-[color:color-mix(in_srgb,var(--purple)_40%,transparent)] blur-3xl" />
+        <div className="hero-glow absolute right-0 bottom-28 h-56 w-56 rounded-full bg-[color:color-mix(in_srgb,var(--red)_22%,transparent)] blur-3xl" />
 
         <div className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-4 pb-16 pt-28 sm:px-6 sm:pb-20">
           <div className="animate-rise mb-6">
@@ -105,16 +105,23 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section pt-0">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="relative overflow-hidden rounded-[1.5rem] border border-[color:var(--line)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--purple)_40%,#120816),#120816_55%,color-mix(in_srgb,var(--red)_22%,#120816))] px-6 py-10 sm:px-10">
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-[linear-gradient(90deg,transparent,color-mix(in_srgb,var(--gold)_18%,transparent))]" />
-            <h2 className="section-title relative">Documenti sempre a portata</h2>
-            <p className="section-lead relative">
+      <section className="relative min-h-[70svh] overflow-hidden">
+        <Image
+          src="/images/hero-coast.jpg"
+          alt="Scout San Giuliano 1 a pranzo all’aperto con panorama costiero"
+          fill
+          className="object-cover object-[50%_35%]"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,3,14,0.82)_0%,rgba(8,3,14,0.55)_48%,rgba(8,3,14,0.35)_100%)]" />
+        <div className="relative mx-auto flex min-h-[70svh] max-w-6xl items-end px-4 py-14 sm:px-6 sm:py-16">
+          <div className="max-w-lg">
+            <h2 className="section-title">Documenti sempre a portata</h2>
+            <p className="section-lead text-[color:var(--ink)]">
               Privacy, schede sanitarie, bigini metodologici e materiali utili
               per famiglie e soci.
             </p>
-            <Link href="/documenti/" className="btn btn-red relative mt-7 no-underline">
+            <Link href="/documenti/" className="btn btn-red mt-7 no-underline">
               Vai ai documenti
             </Link>
           </div>
