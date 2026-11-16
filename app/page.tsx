@@ -13,12 +13,10 @@ export default function HomePage() {
           alt="Gruppo Scout San Giuliano 1 in montagna presso un lago alpino"
           fill
           priority
-          className="object-cover object-[50%_42%]"
+          className="object-cover object-[50%_28%]"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,3,14,0.28)_0%,rgba(8,3,14,0.45)_38%,rgba(8,3,14,0.88)_78%,rgba(8,3,14,0.96)_100%)]" />
-        <div className="hero-glow absolute -left-20 top-24 h-64 w-64 rounded-full bg-[color:color-mix(in_srgb,var(--purple)_40%,transparent)] blur-3xl" />
-        <div className="hero-glow absolute right-0 bottom-28 h-56 w-56 rounded-full bg-[color:color-mix(in_srgb,var(--red)_22%,transparent)] blur-3xl" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,3,14,0.12)_0%,rgba(8,3,14,0.22)_36%,rgba(8,3,14,0.68)_76%,rgba(8,3,14,0.9)_100%)]" />
 
         <div className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-4 pb-16 pt-28 sm:px-6 sm:pb-20">
           <div className="animate-rise mb-6">
@@ -27,7 +25,7 @@ export default function HomePage() {
               alt={`${SITE.name} AGESCI`}
               width={160}
               height={152}
-              className="h-28 w-auto drop-shadow-[0_8px_30px_rgba(0,0,0,0.45)] sm:h-36"
+              className="h-24 w-auto drop-shadow-[0_8px_30px_rgba(0,0,0,0.45)] sm:h-32"
               priority
             />
           </div>
@@ -110,10 +108,10 @@ export default function HomePage() {
           src="/images/hero-coast.jpg"
           alt="Scout San Giuliano 1 a pranzo all’aperto con panorama costiero"
           fill
-          className="object-cover object-[50%_35%]"
+          className="object-cover object-[62%_28%]"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,3,14,0.82)_0%,rgba(8,3,14,0.55)_48%,rgba(8,3,14,0.35)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,3,14,0.78)_0%,rgba(8,3,14,0.42)_42%,rgba(8,3,14,0.18)_100%)]" />
         <div className="relative mx-auto flex min-h-[70svh] max-w-6xl items-end px-4 py-14 sm:px-6 sm:py-16">
           <div className="max-w-lg">
             <h2 className="section-title">Documenti sempre a portata</h2>
