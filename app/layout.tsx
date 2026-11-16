@@ -1,58 +1,41 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import GoogleAnalytics from "./components/GoogleAnalytics";
-import SiteHeader from "./components/SiteHeader";
-import SiteFooter from "./components/SiteFooter";
-import {
-  DEFAULT_DESCRIPTION,
-  DEFAULT_TITLE,
-  INDEX_ROBOTS,
-  SITE_NAME,
-  getSiteUrl,
-  organizationJsonLd,
-} from "@/lib/seo";
+import { Outfit, Source_Sans_3 } from "next/font/google";
+import { Footer } from "./components/Footer";
+import { Header } from "./components/Header";
 import "./globals.css";
+import { SITE } from "@/lib/content";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const outfit = Outfit({
   subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const sourceSans = Source_Sans_3({
   subsets: ["latin"],
+  variable: "--font-source-sans",
+  display: "swap",
 });
 
-const siteVerification = process.env.GOOGLE_SITE_VERIFICATION;
-
-// Site-wide defaults. `metadataBase` resolves relative canonical/OG URLs, and
-// the title template brands any page that only sets a plain string title.
-// Per-page metadata (see each page's `metadata` / `generateMetadata`) provides
-// unique titles, descriptions, canonicals, and Open Graph / Twitter fields.
 export const metadata: Metadata = {
-  metadataBase: new URL(getSiteUrl()),
   title: {
-    default: DEFAULT_TITLE,
-    template: `%s | ${SITE_NAME}`,
+    default: `${SITE.name} AGESCI — ${SITE.tagline}`,
+    template: `%s — ${SITE.name} AGESCI`,
   },
-  description: DEFAULT_DESCRIPTION,
-  applicationName: SITE_NAME,
-  robots: INDEX_ROBOTS,
+  description:
+    "Sito ufficiale del Gruppo Scout AGESCI San Giuliano 1 di San Giuliano Milanese: documenti, calendario, iscrizioni e blog.",
+  metadataBase: new URL("https://andreaprovvido.github.io/crusit"),
   openGraph: {
+    title: `${SITE.name} AGESCI`,
+    description: SITE.tagline,
+    locale: "it_IT",
     type: "website",
-    siteName: SITE_NAME,
-    locale: "en_US",
-    title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION,
+    images: [{ url: "/images/logo.png" }],
   },
-  twitter: {
-    card: "summary_large_image",
-    title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION,
+  icons: {
+    icon: "/images/logo.png",
+    apple: "/images/logo.png",
   },
-  ...(siteVerification
-    ? { verification: { google: siteVerification } }
-    : {}),
 };
 
 export default function RootLayout({
@@ -61,21 +44,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="flex min-h-full flex-col bg-zinc-950 text-white">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationJsonLd(getSiteUrl())),
-          }}
-        />
-        <SiteHeader />
+    <html lang="it" className={`${outfit.variable} ${sourceSans.variable}`}>
+      <body className="site-shell flex min-h-dvh flex-col antialiased">
+        <Header />
         <main className="flex-1">{children}</main>
-        <SiteFooter />
-        <GoogleAnalytics />
+        <Footer />
       </body>
     </html>
   );

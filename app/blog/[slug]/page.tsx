@@ -1,150 +1,86 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import RainbowMeshBackground from "@/app/components/RainbowMeshBackground";
-import RichText from "@/app/components/RichText";
-import { getAllBlogPosts, getBlogPostBySlug } from "@/lib/blog";
-import {
-  blogPostingJsonLd,
-  breadcrumbJsonLd,
-  buildBlogPostMetadata,
-  getSiteUrl,
-} from "@/lib/seo";
+import { PageHero } from "@/app/components/PageHero";
+import { getPost, POSTS, SITE } from "@/lib/content";
 
-type PageProps = {
+type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
-  if (!post) {
-    return { title: "Article not found", robots: { index: false, follow: false } };
-  }
+export function generateStaticParams() {
+  return POSTS.map((post) => ({ slug: post.slug }));
+}
 
-  return buildBlogPostMetadata({
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getPost(slug);
+  if (!post) return { title: "Articolo" };
+  return {
     title: post.title,
-    description: post.description,
-    slug: post.slug,
-    path: `/blog/${post.slug}`,
-    publishedTime: post.publishedTime,
-    modifiedTime: post.modifiedTime,
-  });
+    description: post.excerpt,
+  };
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
-
-export default async function BlogPostPage({ params }: PageProps) {
+export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const posts = await getAllBlogPosts();
-  const post = posts.find((entry) => entry.slug === slug);
+  const post = getPost(slug);
   if (!post) notFound();
 
-  const siteUrl = getSiteUrl();
-  const more = posts.filter((entry) => entry.slug !== post.slug).slice(0, 3);
-
   return (
-    <div className="relative overflow-hidden">
-      <RainbowMeshBackground variant="spots" />
-      <div className="relative z-10 mx-auto max-w-3xl px-6 py-10">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(blogPostingJsonLd(post, siteUrl)),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(
-              breadcrumbJsonLd(
-                [
-                  { name: "Home", path: "/" },
-                  { name: "Blog", path: "/blog" },
-                  { name: post.title, path: `/blog/${post.slug}` },
-                ],
-                siteUrl,
-              ),
-            ),
-          }}
-        />
+    <>
+      <PageHero eyebrow={post.dateLabel} title={post.title} />
+      <article className="section pt-6">
+        <div className="prose-scout mx-auto max-w-3xl px-4 sm:px-6">
+          {post.body.map((paragraph) => (
+            <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+          ))}
 
-        <nav aria-label="Breadcrumb" className="text-sm text-zinc-400">
-          <Link href="/blog" className="hover:text-white">
-            Blog
-          </Link>
-          <span aria-hidden="true"> / </span>
-          <span className="text-zinc-300">{post.title}</span>
-        </nav>
-
-        <article className="mt-4">
-          <header>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
-              <time dateTime={post.publishedTime}>
-                {formatDate(post.publishedTime)}
-              </time>
-              <span aria-hidden="true">·</span>
-              <span>{post.readingMinutes} min read</span>
-              <span aria-hidden="true">·</span>
-              <span>{post.author}</span>
+          {post.attachments?.length ? (
+            <div className="mt-8 border-t border-[color:var(--line)] pt-6">
+              <h2 className="font-display mb-3 text-xl font-bold text-[color:var(--gold-soft)]">
+                Allegati
+              </h2>
+              <ul className="space-y-2">
+                {post.attachments.map((file) => (
+                  <li key={file.href}>
+                    <a
+                      href={file.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-[color:var(--gold)]"
+                    >
+                      {file.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <h1 className="mt-3 text-4xl font-bold tracking-tight text-white">
-              {post.title}
-            </h1>
-            <p className="mt-3 text-lg text-zinc-400">{post.excerpt}</p>
-          </header>
-
-          <div className="mt-8">
-            <RichText content={post.body} />
-          </div>
-
-          {post.tags.length > 0 ? (
-            <ul className="mt-10 flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
-                <li
-                  key={tag}
-                  className="rounded-full border border-zinc-800 bg-zinc-900/50 px-3 py-1 text-xs text-zinc-400"
-                >
-                  #{tag}
-                </li>
-              ))}
-            </ul>
           ) : null}
-        </article>
 
-        {more.length > 0 ? (
-          <section className="mt-12 border-t border-zinc-800 pt-8">
-            <h2 className="text-lg font-semibold text-white">More guides</h2>
-            <ul className="mt-4 space-y-3">
-              {more.map((entry) => (
-                <li key={entry.slug}>
-                  <Link
-                    href={`/blog/${entry.slug}`}
-                    className="text-emerald-400 hover:text-emerald-300"
-                  >
-                    {entry.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
-
-        <div className="mt-8">
-          <Link
-            href="/blog"
-            className="text-sm font-medium text-emerald-400 hover:text-emerald-300"
-          >
-            ← Back to all articles
-          </Link>
+          <div className="mt-10 flex flex-wrap gap-4 text-sm">
+            <Link href="/blog/" className="font-semibold text-[color:var(--gold)]">
+              ← Torna al blog
+            </Link>
+            <a
+              href={SITE.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-[color:var(--ink-muted)]"
+            >
+              Instagram
+            </a>
+            <a
+              href={SITE.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-[color:var(--ink-muted)]"
+            >
+              Facebook
+            </a>
+          </div>
         </div>
-      </div>
-    </div>
+      </article>
+    </>
   );
 }

@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# San Giuliano 1 AGESCI
 
-## Getting Started
+Sito pubblico del **Gruppo Scout San Giuliano 1** (AGESCI), in sostituzione di [sangiuliano1.wordpress.com](https://sangiuliano1.wordpress.com/).
 
-First, run the development server:
+## Sezioni (mirror WordPress)
+
+- **Home** — brand, CTA iscrizioni / calendario / Progetto Educativo, ultimi post
+- **Documenti** (`/documenti`) — ex *Modulistica*
+- **Calendario** (`/calendario`) — Google Calendar del gruppo
+- **Iscrizioni** (`/iscrizioni`) — ex *Scrivici* + form liste d’attesa
+- **Blog** (`/blog`) — archivio articoli
+
+## Sviluppo
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Build statico:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+# output in ./out
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Per GitHub Pages (basePath `/crusit`):
 
-## Learn More
+```bash
+GITHUB_PAGES=true npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Hosting
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **GitHub Pages**: workflow `.github/workflows/deploy-pages.yml` pubblica `out/` su push a `main`.
+  URL previsto: `https://andreaprovvido.github.io/crusit/`
+  Richiede Pages abilitato (Settings → Pages → Source: GitHub Actions).
+- **Vercel**: il repo è già collegato; un deploy/preview fornisce un URL `*.vercel.app`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Brand
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Logo ufficiale in `public/images/logo.png` (viola / oro / rosso su fondo scuro).
